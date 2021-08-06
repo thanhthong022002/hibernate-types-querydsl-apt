@@ -3,7 +3,6 @@ package com.pallasathenagroup.querydsl;
 import com.pallasathenagroup.querydsl.ArrayEntity.SensorState;
 import com.querydsl.core.Tuple;
 import com.querydsl.jpa.impl.JPAQuery;
-import org.hibernate.testing.junit4.BaseCoreFunctionalTestCase;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -19,21 +18,16 @@ import static org.hibernate.testing.transaction.TransactionUtil.doInJPA;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
-public class ArrayEntityPathTest extends BaseCoreFunctionalTestCase {
+public class ArrayEntityPathTest extends BaseTestContainersTest {
 
     @Override
     protected Class<?>[] getAnnotatedClasses() {
         return new Class<?>[] { ArrayEntity.class };
     }
 
-    @Override
-    protected boolean isCleanupTestDataRequired() {
-        return true;
-    }
-
     @Before
     public void setUp() {
-        doInJPA(this::sessionFactory, entityManager -> {
+        doInJPA(this.buildEmf(), entityManager -> {
             Date date1 = Date.from(LocalDate.of(1991, 12, 31).atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
             Date date2 = Date.from(LocalDate.of(1990, 1, 1).atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
 
@@ -53,7 +47,7 @@ public class ArrayEntityPathTest extends BaseCoreFunctionalTestCase {
 
     @Test
     public void testArrayPaths() {
-        doInJPA(this::sessionFactory, entityManager -> {
+        doInJPA(this.buildEmf(), entityManager -> {
             List<Tuple> fetch = new JPAQuery<>(entityManager, ExtendedHQLTemplates.DEFAULT)
                     .from(arrayEntity).select(
                             arrayEntity.sensorValues.get(0),
@@ -91,7 +85,7 @@ public class ArrayEntityPathTest extends BaseCoreFunctionalTestCase {
 
     @Test
     public void testArrayAgg() {
-        doInJPA(this::sessionFactory, entityManager -> {
+        doInJPA(this.buildEmf(), entityManager -> {
             new JPAQuery<>(entityManager, ExtendedHQLTemplates.DEFAULT)
                     .from(arrayEntity)
                     .select(HibernateTypesExpressions.arrayAgg(arrayEntity.sensorStates.get(0)))
