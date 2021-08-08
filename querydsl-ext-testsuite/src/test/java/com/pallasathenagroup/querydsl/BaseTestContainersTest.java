@@ -67,6 +67,10 @@ public abstract class BaseTestContainersTest {
         };
     }
 
+    public EntityManagerFactory sessionFactory() {
+        return this.buildEmf().get();
+    }
+
     public static final class MyPersistenceUnitInfo extends PersistenceUnitInfoAdapter {
 
         private final Class<?>[] classes;

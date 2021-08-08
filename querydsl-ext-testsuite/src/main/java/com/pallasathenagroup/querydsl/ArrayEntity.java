@@ -1,13 +1,6 @@
 package com.pallasathenagroup.querydsl;
 
-import com.vladmihalcea.hibernate.type.array.DateArrayType;
-import com.vladmihalcea.hibernate.type.array.DoubleArrayType;
-import com.vladmihalcea.hibernate.type.array.EnumArrayType;
-import com.vladmihalcea.hibernate.type.array.IntArrayType;
-import com.vladmihalcea.hibernate.type.array.LongArrayType;
-import com.vladmihalcea.hibernate.type.array.StringArrayType;
-import com.vladmihalcea.hibernate.type.array.TimestampArrayType;
-import com.vladmihalcea.hibernate.type.array.UUIDArrayType;
+import com.vladmihalcea.hibernate.type.array.*;
 import com.vladmihalcea.hibernate.type.basic.PostgreSQLEnumType;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
@@ -19,10 +12,12 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
 @TypeDefs({
+        @TypeDef(name = "list-array", typeClass = ListArrayType.class),
         @TypeDef(name = "uuid-array", typeClass = UUIDArrayType.class, defaultForType = UUID[].class),
         @TypeDef(name = "string-array", typeClass = StringArrayType.class, defaultForType = String[].class),
         @TypeDef(name = "int-array", typeClass = IntArrayType.class, defaultForType = int[].class),
@@ -48,6 +43,10 @@ public class ArrayEntity {
     @Type(type = "string-array")
     @Column(name = "sensor_names", columnDefinition = "text[]")
     String[] sensorNames;
+
+    @Type(type = "list-array")
+    @Column(name = "sensor_names_str", columnDefinition = "text[]")
+    List<String> sensorNameStr;
 
     @Type(type = "int-array")
     @Column(name = "sensor_values", columnDefinition = "integer[]")
@@ -95,6 +94,14 @@ public class ArrayEntity {
 
     public void setSensorNames(String[] sensorNames) {
         this.sensorNames = sensorNames;
+    }
+
+    public List<String> getSensorNameStr() {
+        return sensorNameStr;
+    }
+
+    public void setSensorNameStr(List<String> sensorNameStr) {
+        this.sensorNameStr = sensorNameStr;
     }
 
     public int[] getSensorValues() {

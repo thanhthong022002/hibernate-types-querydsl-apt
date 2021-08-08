@@ -1,5 +1,6 @@
 package com.pallasathenagroup.querydsl;
 
+import com.google.common.collect.Lists;
 import com.pallasathenagroup.querydsl.ArrayEntity.SensorState;
 import com.querydsl.core.Tuple;
 import com.querydsl.jpa.impl.JPAQuery;
@@ -35,6 +36,7 @@ public class ArrayEntityPathTest extends BaseTestContainersTest {
             arrayEntity.setId(1L);
             arrayEntity.setSensorIds(new UUID[]{UUID.fromString("c65a3bcb-8b36-46d4-bddb-ae96ad016eb1"), UUID.fromString("72e95717-5294-4c15-aa64-a3631cf9a800")});
             arrayEntity.setSensorNames(new String[]{"Temperature", "Pressure"});
+            arrayEntity.setSensorNameStr(Lists.newArrayList("Thong", "Nguyen"));
             arrayEntity.setSensorValues(new int[]{12, 756});
             arrayEntity.setSensorLongValues(new long[]{42L, 9223372036854775800L});
             arrayEntity.setSensorDoubleValues(new double[]{0.123, 456.789});
@@ -61,7 +63,12 @@ public class ArrayEntityPathTest extends BaseTestContainersTest {
                             arrayEntity.sensorValues.overlaps(12, 13),
                             arrayEntity.sensorValues.size(),
                             arrayEntity.sensorStates.concat(SensorState.ONLINE, SensorState.UNKNOWN).contains(SensorState.ONLINE),
-                            arrayEntity.sensorStates.get(0)
+                            arrayEntity.sensorStates.get(0),
+
+                            // extend
+                            arrayEntity.sensorValues.overlaps(Lists.newArrayList(12, 14)),
+                            arrayEntity.sensorNameStr.overlaps(Lists.newArrayList("Thong", "Thanh")),
+                            arrayEntity.sensorNameStr.contains(Lists.newArrayList("Thong"))
                             )
                     .where(createArrayExpression(1, 2).contains(createArrayExpression(1,2 )))
                     .fetch();
@@ -79,6 +86,11 @@ public class ArrayEntityPathTest extends BaseTestContainersTest {
             assertEquals(2, tuple.get(9, Object.class));
             assertEquals(true, tuple.get(10, Object.class));
             assertEquals(SensorState.ONLINE, tuple.get(11, Object.class));
+
+            // extend
+            assertEquals(true, tuple.get(12, Object.class));
+            assertEquals(true, tuple.get(13, Object.class));
+            assertEquals(true, tuple.get(14, Object.class));
         });
     }
 
