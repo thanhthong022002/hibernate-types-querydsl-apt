@@ -12,13 +12,24 @@ import com.querydsl.codegen.utils.model.Types;
 import com.querydsl.core.util.Annotations;
 
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 public class HibernateTypeMappings extends JavaTypeMappings {
 
+    public static final Map<String, String> hibernateTypeNameMappings;
+
+    static {
+        hibernateTypeNameMappings = new HashMap<>();
+        hibernateTypeNameMappings.put("string-array", "array");
+        hibernateTypeNameMappings.put("int-array", "array");
+        hibernateTypeNameMappings.put("list-array", "array");
+        hibernateTypeNameMappings.put("jsonb", "jsonb");
+        hibernateTypeNameMappings.put("hstore", "hstore");
+    }
+
     public HibernateTypeMappings() {
         super();
-        System.out.println("Init my mapping");
-
     }
 
     @Override
@@ -29,26 +40,25 @@ public class HibernateTypeMappings extends JavaTypeMappings {
             if (annotatedElement != null) {
                 org.hibernate.annotations.Type typeAnn = annotatedElement.getAnnotation(org.hibernate.annotations.Type.class);
 
-                System.out.println(
+                /*System.out.println(
                         "getPathType: " + type.getFullName() + " model: " + model.getFullName() +
                                 " type: " + (typeAnn != null ? typeAnn.type() : "empty")
-                );
+                );*/
 
-                if (typeAnn != null) {
+                if (typeAnn != null && hibernateTypeNameMappings.containsKey(typeAnn.type())) {
                     String typeValue = typeAnn.type();
+                    String targetType = hibernateTypeNameMappings.get(typeValue);
 
-                    if (typeValue.equals("hstore")) {
+                    if (targetType.equals("hstore")) {
                         SimpleType hstore = new SimpleType(new SimpleType(
                                 HstorePath.class.getName()
                         ));
-                        System.out.println("Returned hstore: " + hstore);
                         return hstore;
-                    } else if (typeValue.equals("jsonb")) {
+                    } else if (targetType.equals("jsonb")) {
                         SimpleType jsonb = new SimpleType(new SimpleType(JsonPath.class.getName()),
                                 Collections.singletonList(type));
-                        System.out.println("Returned jsonb: " + jsonb);
                         return jsonb;
-                    } else if (typeValue.endsWith("-array")) {
+                    } else if (targetType.equals("array")) {
                         Type param1 = type.getParameters().size() > 0 ?
                                 type.getParameters().get(0) : type.getComponentType();
 
@@ -56,7 +66,6 @@ public class HibernateTypeMappings extends JavaTypeMappings {
                         Type enumArrayType = enumType.asArrayType();
                         Class arrayPathClass = PostgresqlArrayPath.class;
 
-                        System.out.println("Returned array type");
                         return new SimpleType(
                                 arrayPathClass.getName(),
                                 arrayPathClass.getPackage().getName(),

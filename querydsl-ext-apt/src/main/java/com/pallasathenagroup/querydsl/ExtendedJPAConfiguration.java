@@ -21,6 +21,7 @@ import java.lang.annotation.Annotation;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 public class ExtendedJPAConfiguration extends DefaultConfiguration {
 
@@ -128,8 +129,10 @@ public class ExtendedJPAConfiguration extends DefaultConfiguration {
             annotations.addAnnotation(new QueryTypeImpl(propertyType));
         }
 
+        Map<String, String> hibernateTypeMappings = HibernateTypeMappings.hibernateTypeNameMappings;
         Type type = element.getAnnotation(Type.class);
-        if (type != null) {
+        if (hibernateTypeMappings != null && type != null && type.type() != null &&
+                hibernateTypeMappings.containsKey(type.type())) {
             annotations.addAnnotation(type);
             annotations.addAnnotation(new QueryTypeImpl(PropertyType.CUSTOM));
         }
