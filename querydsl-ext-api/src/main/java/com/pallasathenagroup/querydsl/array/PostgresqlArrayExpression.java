@@ -2,13 +2,16 @@ package com.pallasathenagroup.querydsl.array;
 
 import com.pallasathenagroup.querydsl.TypedParameterValueSimpleExpression;
 import com.querydsl.core.types.Expression;
+import com.querydsl.core.types.Ops;
 import com.querydsl.core.types.Visitor;
 import com.querydsl.core.types.dsl.*;
 import com.vladmihalcea.hibernate.type.array.*;
 import org.hibernate.jpa.TypedParameterValue;
 
 import javax.annotation.Nullable;
+import java.lang.reflect.Array;
 import java.sql.Timestamp;
+import java.util.Collection;
 import java.util.Date;
 import java.util.UUID;
 
@@ -57,8 +60,24 @@ public class PostgresqlArrayExpression<A, T> extends TypedParameterValueSimpleEx
         return Expressions.predicate(ArrayOps.OVERLAPS, this, new PostgresqlArrayExpression<>(Expressions.constant(getTypedParameterValue(other, columnDefinition)), columnDefinition));
     }
 
+    public BooleanOperation overlaps(Collection<T> other) {
+        if (other == null || other.isEmpty()) {
+            return Expressions.booleanOperation(Ops.AND, Expressions.TRUE, Expressions.FALSE);
+        }
+        Class firstElementClazz = other.iterator().next().getClass();
+        return overlaps(other.toArray((T[]) Array.newInstance(firstElementClazz, 0)));
+    }
+
     public BooleanOperation contains(T... other) {
         return Expressions.predicate(ArrayOps.CONTAINS, this, new PostgresqlArrayExpression<>(Expressions.constant(getTypedParameterValue(other, columnDefinition)), columnDefinition));
+    }
+
+    public BooleanOperation contains(Collection<T> other) {
+        if (other == null || other.isEmpty()) {
+            return Expressions.booleanOperation(Ops.AND, Expressions.TRUE, Expressions.TRUE);
+        }
+        Class firstElementClazz = other.iterator().next().getClass();
+        return contains(other.toArray((T[]) Array.newInstance(firstElementClazz, 0)));
     }
 
     public BooleanOperation isContainedBy(T... other) {
