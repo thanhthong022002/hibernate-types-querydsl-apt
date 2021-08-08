@@ -1,11 +1,9 @@
 package com.pallasathenagroup.querydsl;
 
-import com.querydsl.apt.DefaultConfiguration;
-import com.querydsl.apt.QueryTypeImpl;
-import com.querydsl.apt.TypeUtils;
-import com.querydsl.apt.VisitorConfig;
+import com.querydsl.apt.*;
 import com.querydsl.codegen.CodegenModule;
 import com.querydsl.codegen.Keywords;
+import com.querydsl.codegen.NameClassSerializer;
 import com.querydsl.core.annotations.*;
 import com.querydsl.core.util.Annotations;
 import org.hibernate.annotations.Type;
@@ -28,6 +26,7 @@ public class ExtendedJPAConfiguration extends DefaultConfiguration {
     private final List<Class<? extends Annotation>> annotations;
 
     private final Types types;
+    private final CodegenModule codegenModule;
 
     public ExtendedJPAConfiguration(RoundEnvironment roundEnv,
                                     ProcessingEnvironment processingEnv,
@@ -39,9 +38,17 @@ public class ExtendedJPAConfiguration extends DefaultConfiguration {
                                     CodegenModule codegenModule) {
         super(processingEnv, roundEnv, processingEnv.getOptions(), Keywords.JPA, QueryEntities.class, entityAnn, superTypeAnn,
                 embeddableAnn, embeddedAnn, skipAnn, codegenModule);
+        this.codegenModule = codegenModule;
         this.annotations = getAnnotations();
         this.types = processingEnv.getTypeUtils();
+
+        this.codegenModule.bind(DefaultNameClassSerializer.class, DefaultNameClassSerializer.class);
         setStrictMode(true);
+    }
+
+    @Override
+    public NameClassSerializer getNameClassSerializer() {
+        return codegenModule.get(DefaultNameClassSerializer.class);
     }
 
     @SuppressWarnings("unchecked")

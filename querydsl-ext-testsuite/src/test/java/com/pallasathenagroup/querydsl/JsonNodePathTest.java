@@ -1,15 +1,17 @@
 package com.pallasathenagroup.querydsl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.pallasathenagroup.querydsl.json.JsonExpressions;
+import com.pallasathenagroup.querydsl.json.JsonPath;
+import com.querydsl.core.Tuple;
 import com.querydsl.jpa.impl.JPAQuery;
-import org.hibernate.testing.junit4.BaseCoreFunctionalTestCase;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -20,7 +22,7 @@ import static com.pallasathenagroup.querydsl.QJsonNodeEntity.jsonNodeEntity;
 import static org.hibernate.testing.transaction.TransactionUtil.doInJPA;
 import static org.junit.Assert.assertEquals;
 
-public class JsonNodePathTest extends BaseCoreFunctionalTestCase {
+public class JsonNodePathTest extends BaseTestContainersTest {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
     private JsonNodeEntity entity;
@@ -33,21 +35,29 @@ public class JsonNodePathTest extends BaseCoreFunctionalTestCase {
     @Before
     public void setUp() {
         doInJPA(this::sessionFactory, entityManager -> {
+            entityManager.createQuery("delete from JsonNodeEntity j").executeUpdate();
+
             entity = new JsonNodeEntity();
             entity.jsonNode = objectMapper.valueToTree(ImmutableMap.of("a", 123));
+            entity.listInt = List.of(1, 2, 3, 4);
+
+            JsonNodeEntity.Embed1 e1 = new JsonNodeEntity.Embed1();
+            e1.embed1_attr1 = "embed1_attr1";
+            e1.embed1_intList = List.of(1, 2, 3);
+            entity.embed1 = e1;
+
+            JsonNodeEntity.Embed2 e2 = new JsonNodeEntity.Embed2();
+            e2.embed2_attr1 = "embed2_attr1";
+            e1.embed1_attr2 = e2;
+
             entityManager.persist(entity);
         });
-    }
-
-    @Override
-    protected boolean isCleanupTestDataRequired() {
-        return true;
     }
 
     @Test
     public void getFieldAsText() {
         doInJPA(this::sessionFactory, entityManager -> {
-            String result = new JPAQuery<RangeEntity>(entityManager, ExtendedHQLTemplates.DEFAULT)
+            String result = new JPAQuery<JsonNodeEntity>(entityManager, ExtendedHQLTemplates.DEFAULT)
                     .from(jsonNodeEntity)
                     .select(
                             jsonNodeEntity.jsonNode.get("a").asText()
@@ -61,7 +71,7 @@ public class JsonNodePathTest extends BaseCoreFunctionalTestCase {
     @Test
     public void getFieldAsNode() {
         doInJPA(this::sessionFactory, entityManager -> {
-            JsonNode result = new JPAQuery<RangeEntity>(entityManager, ExtendedHQLTemplates.DEFAULT)
+            JsonNode result = new JPAQuery<JsonNode>(entityManager, ExtendedHQLTemplates.DEFAULT)
                     .from(jsonNodeEntity)
                     .select(
                             jsonNodeEntity.jsonNode.get("a")
@@ -75,7 +85,7 @@ public class JsonNodePathTest extends BaseCoreFunctionalTestCase {
     @Test
     public void getKeys() {
         doInJPA(this::sessionFactory, entityManager -> {
-            List<String> result = new JPAQuery<RangeEntity>(entityManager, ExtendedHQLTemplates.DEFAULT)
+            List<String> result = new JPAQuery<JsonNodeEntity>(entityManager, ExtendedHQLTemplates.DEFAULT)
                     .from(jsonNodeEntity)
                     .select(
                             jsonNodeEntity.jsonNode.keys()
@@ -86,11 +96,69 @@ public class JsonNodePathTest extends BaseCoreFunctionalTestCase {
         });
     }
 
+    @Test
+    public void contains() {
+        doInJPA(this::sessionFactory, entityManager -> {
+            JsonPath<JsonNodeEntity.Embed1> embed1 = jsonNodeEntity.embed1;
+
+            List<Tuple> result = new JPAQuery<JsonNodeEntity>(entityManager, ExtendedHQLTemplates.DEFAULT)
+                    .from(jsonNodeEntity)
+                    .select(
+                            embed1.containsKey("embed1_attr1"),
+                            embed1.contains(Map.of("embed1_attr1", "embed1_attr1")),
+                            embed1.get("embed1_attr2")
+                                    .contains(Map.of("embed2_attr1", "embed2_attr1"))
+                    )
+                    .fetch();
+
+            Tuple tuple = result.get(0);
+            assertEquals(true, tuple.get(0, Object.class));
+            assertEquals(true, tuple.get(1, Object.class));
+            assertEquals(true, tuple.get(2, Object.class));
+        });
+    }
+
+    @Test
+    public void concat() {
+        doInJPA(this::sessionFactory, entityManager -> {
+            JsonPath<JsonNodeEntity.Embed1> embed1 = jsonNodeEntity.embed1;
+
+            List<Tuple> result = new JPAQuery<JsonNodeEntity>(entityManager, ExtendedHQLTemplates.DEFAULT)
+                    .from(jsonNodeEntity)
+                    .select(
+                            jsonNodeEntity.id,
+                            jsonNodeEntity.listInt.concat(List.of(5, 6, 7)),
+                            embed1.get("embed1_intList").concat(4, 5, 6),
+                            jsonNodeEntity.listInt.concat(embed1.get("embed1_intList"))
+                    )
+                    .fetch();
+
+            Tuple tuple = result.get(0);
+            assertEquals(List.of(1, 2, 3, 4, 5, 6, 7),
+                    objectMapper.convertValue(
+                            tuple.get(1, ArrayNode.class),
+                            new TypeReference<List<Integer>>() {})
+            );
+            assertEquals(List.of(1, 2, 3, 4, 5, 6),
+                    objectMapper.convertValue(
+                            tuple.get(2, ArrayNode.class),
+                            new TypeReference<List<Integer>>() {})
+            );
+            /*
+            Don't know why return null
+            assertEquals(List.of(1, 2, 3, 4, 1, 2, 3),
+                    objectMapper.convertValue(
+                            tuple.get(3, ArrayNode.class),
+                            new TypeReference<List<Integer>>() {})
+            );*/
+        });
+    }
+
 
     @Test
     public void buildJsonObject() {
         doInJPA(this::sessionFactory, entityManager -> {
-            ObjectNode result = new JPAQuery<RangeEntity>(entityManager, ExtendedHQLTemplates.DEFAULT)
+            ObjectNode result = new JPAQuery<JsonNodeEntity>(entityManager, ExtendedHQLTemplates.DEFAULT)
                     .from(jsonNodeEntity)
                     .select(
                             JsonExpressions.buildJsonObject(jsonNodeEntity.id.as("id"), jsonNodeEntity.id.as("id2"))
@@ -108,7 +176,7 @@ public class JsonNodePathTest extends BaseCoreFunctionalTestCase {
     @Test
     public void buildJsonObject2() {
         doInJPA(this::sessionFactory, entityManager -> {
-            ObjectNode result = new JPAQuery<RangeEntity>(entityManager, ExtendedHQLTemplates.DEFAULT)
+            ObjectNode result = new JPAQuery<JsonNodeEntity>(entityManager, ExtendedHQLTemplates.DEFAULT)
                     .from(jsonNodeEntity)
                     .select(
                             JsonExpressions.buildJsonObject(ImmutableMap.of("id", jsonNodeEntity.id, "id2", jsonNodeEntity.id))

@@ -1,12 +1,14 @@
 package com.pallasathenagroup.querydsl.json;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.Visitor;
-import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.core.types.dsl.Expressions;
-import com.querydsl.core.types.dsl.NumberExpression;
-import com.querydsl.core.types.dsl.SimpleExpression;
-import com.querydsl.core.types.dsl.StringExpression;
+import com.querydsl.core.types.dsl.*;
+import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
+import org.hibernate.jpa.TypedParameterValue;
+
+import java.util.List;
 
 public class JsonExpression<T> extends SimpleExpression<T> {
 
@@ -27,8 +29,16 @@ public class JsonExpression<T> extends SimpleExpression<T> {
         return containsKey(Expressions.constant(key));
     }
 
-    public JsonOperation<T> get(Expression<?> key) {
-        return new JsonOperation<T>(Expressions.operation(getType(), JsonOps.GET, mixin, key)) {
+    public BooleanExpression contains(JsonExpression<?> object) {
+        return Expressions.predicate(JsonOps.CONTAINS, this, object);
+    }
+
+    public BooleanExpression contains(Object object) {
+        return contains(constant(object));
+    }
+
+    public JsonOperation<JsonNode> get(Expression<?> key) {
+        return new JsonOperation<>(Expressions.operation(JsonNode.class, JsonOps.GET, mixin, key)) {
             @Override
             public StringExpression asText() {
                 return Expressions.stringOperation(JsonOps.GET_TEXT, JsonExpression.this.mixin, key);
@@ -36,11 +46,11 @@ public class JsonExpression<T> extends SimpleExpression<T> {
         };
     }
 
-    public JsonExpression<T> get(Integer index) {
+    public JsonExpression<JsonNode> get(Integer index) {
         return get(Expressions.constant(index));
     }
 
-    public JsonExpression<T> get(String key) {
+    public JsonExpression<JsonNode> get(String key) {
         return get(Expressions.constant(key));
     }
 
@@ -48,8 +58,18 @@ public class JsonExpression<T> extends SimpleExpression<T> {
         throw new UnsupportedOperationException();
     }
 
-    public JsonOperation<T> concat(JsonExpression<?> other) {
-        return new JsonOperation<>(Expressions.operation(getType(), JsonOps.CONCAT, mixin, other));
+    public JsonOperation<ArrayNode> concat(JsonExpression<?> other) {
+        return new JsonOperation<>(Expressions.operation(ArrayNode.class, JsonOps.CONCAT, mixin, other));
+    }
+
+    public <A> JsonOperation<ArrayNode> concat(A... other) {
+        // convert to list, since array will cause
+        // IllegalArgumentException: Encountered array-valued parameter binding, but was expecting
+        return concat(constant(List.of(other)));
+    }
+
+    public <A> JsonOperation<ArrayNode> concat(List<A> other) {
+        return concat(constant(other));
     }
 
     public final NumberExpression<Integer> size() {
@@ -64,4 +84,14 @@ public class JsonExpression<T> extends SimpleExpression<T> {
         return Expressions.stringOperation(JsonOps.ELEMENTS, mixin);
     }
 
+    public JsonExpression<?> constant(Object object) {
+        return new JsonExpression<>(
+                Expressions.constant(
+                    new TypedParameterValue(
+                            JsonBinaryType.INSTANCE,
+                            object
+                    )
+                )
+        );
+    }
 }

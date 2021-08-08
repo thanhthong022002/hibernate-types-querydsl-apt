@@ -67,6 +67,7 @@ public class ExtendedHQLTemplates extends HQLTemplates {
         templates.add(PeriodOps.SUM, "PERIOD_SUM({0})");
 
         templates.add(JsonOps.CONTAINS_KEY, "JSON_CONTAINS_KEY({0}, {1})");
+        templates.add(JsonOps.CONTAINS, "JSON_CONTAINS({0}, {1})");
         templates.add(JsonOps.GET, "JSON_GET({0}, {1})");
         templates.add(JsonOps.GET_TEXT, "JSON_GET_TEXT({0}, {1})");
         templates.add(JsonOps.CONCAT, "JSON_CONCAT({0}, {1})");
