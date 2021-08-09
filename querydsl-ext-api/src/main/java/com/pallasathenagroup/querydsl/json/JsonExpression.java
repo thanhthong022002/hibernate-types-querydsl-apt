@@ -2,7 +2,9 @@ package com.pallasathenagroup.querydsl.json;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.querydsl.core.types.ConstantImpl;
 import com.querydsl.core.types.Expression;
+import com.querydsl.core.types.Ops;
 import com.querydsl.core.types.Visitor;
 import com.querydsl.core.types.dsl.*;
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
@@ -56,6 +58,18 @@ public class JsonExpression<T> extends SimpleExpression<T> {
 
     public StringExpression asText() {
         throw new UnsupportedOperationException();
+    }
+
+    public <A extends Number & Comparable<? super A>> NumberExpression<A> asNumber(Class<A> type) {
+        return Expressions.numberOperation(type, Ops.NUMCAST, mixin, ConstantImpl.create(type));
+    }
+
+    public NumberExpression<Integer> asInteger() {
+        return asNumber(Integer.class);
+    }
+
+    public NumberExpression<Long> asLong() {
+        return asNumber(Long.class);
     }
 
     public JsonOperation<ArrayNode> concat(JsonExpression<?> other) {

@@ -5,6 +5,8 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.BooleanNode;
+import com.fasterxml.jackson.databind.node.IntNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -44,6 +46,8 @@ public class JsonNodePathTest extends BaseTestContainersTest {
             JsonNodeEntity.Embed1 e1 = new JsonNodeEntity.Embed1();
             e1.embed1_attr1 = "embed1_attr1";
             e1.embed1_intList = List.of(1, 2, 3);
+            e1.embed1_boolean = true;
+            e1.embed1_int = 1;
             entity.embed1 = e1;
 
             JsonNodeEntity.Embed2 e2 = new JsonNodeEntity.Embed2();
@@ -69,16 +73,52 @@ public class JsonNodePathTest extends BaseTestContainersTest {
     }
 
     @Test
-    public void getFieldAsNode() {
+    public void cast() {
         doInJPA(this::sessionFactory, entityManager -> {
-            JsonNode result = new JPAQuery<JsonNode>(entityManager, ExtendedHQLTemplates.DEFAULT)
+            Tuple result = new JPAQuery<JsonNodeEntity>(entityManager, ExtendedHQLTemplates.DEFAULT)
                     .from(jsonNodeEntity)
                     .select(
-                            jsonNodeEntity.jsonNode.get("a")
+                            jsonNodeEntity.id,
+                            jsonNodeEntity.embed1.get("embed1_int")
+                                    .asNumber(Integer.class)
+                                    .in(1, 2, 4)
                     )
                     .fetchOne();
 
-            assertEquals(objectMapper.valueToTree(123), result);
+            assertEquals(true, result.get(1, Object.class));
+        });
+    }
+
+    @Test
+    public void size() {
+        doInJPA(this::sessionFactory, entityManager -> {
+            Tuple result = new JPAQuery<JsonNodeEntity>(entityManager, ExtendedHQLTemplates.DEFAULT)
+                    .from(jsonNodeEntity)
+                    .select(
+                            jsonNodeEntity.id,
+                            jsonNodeEntity.embed1.get("embed1_intList").size(),
+                            jsonNodeEntity.listInt.size()
+                    )
+                    .fetchOne();
+
+            assertEquals(3, result.get(1, Object.class));
+            assertEquals(4, result.get(2, Object.class));
+        });
+    }
+
+    @Test
+    public void getFieldAsNode() {
+        doInJPA(this::sessionFactory, entityManager -> {
+            Tuple result = new JPAQuery<JsonNode>(entityManager, ExtendedHQLTemplates.DEFAULT)
+                    .from(jsonNodeEntity)
+                    .select(
+                            jsonNodeEntity.jsonNode.get("a"),
+                            jsonNodeEntity.embed1.get("embed1_boolean")
+                    )
+                    .fetchOne();
+
+            assertEquals(IntNode.valueOf(123), result.get(0, Object.class));
+            assertEquals(BooleanNode.TRUE, result.get(1, Object.class));
         });
     }
 
@@ -107,7 +147,13 @@ public class JsonNodePathTest extends BaseTestContainersTest {
                             embed1.containsKey(NEmbed1.embed1.embed1_attr1),
                             embed1.contains(Map.of(NEmbed1.embed1.embed1_attr1, "embed1_attr1")),
                             embed1.get(NEmbed1.embed1.embed1_attr2.path())
-                                    .contains(Map.of(NEmbed2.embed2.embed2_attr1, "embed2_attr1"))
+                                    .contains(Map.of(NEmbed2.embed2.embed2_attr1, "embed2_attr1")),
+                            embed1.contains(
+                                    Map.of(
+                                        NEmbed1.embed1.embed1_intList,
+                                        List.of(1)
+                                    )
+                            )
                     )
                     .fetch();
 
@@ -115,6 +161,7 @@ public class JsonNodePathTest extends BaseTestContainersTest {
             assertEquals(true, tuple.get(0, Object.class));
             assertEquals(true, tuple.get(1, Object.class));
             assertEquals(true, tuple.get(2, Object.class));
+            assertEquals(true, tuple.get(3, Object.class));
         });
     }
 

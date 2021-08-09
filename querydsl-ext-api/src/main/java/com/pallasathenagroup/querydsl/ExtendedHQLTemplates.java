@@ -71,7 +71,7 @@ public class ExtendedHQLTemplates extends HQLTemplates {
         templates.add(JsonOps.GET, "JSON_GET({0}, {1})");
         templates.add(JsonOps.GET_TEXT, "JSON_GET_TEXT({0}, {1})");
         templates.add(JsonOps.CONCAT, "JSON_CONCAT({0}, {1})");
-        templates.add(JsonOps.MAP_SIZE, "jsonb_array_length({0}, {1})");
+        templates.add(JsonOps.MAP_SIZE, "jsonb_array_length({0})");
         templates.add(JsonOps.KEYS, "jsonb_object_keys({0})");
         templates.add(JsonOps.ELEMENTS, "jsonb_array_elements_text({0})");
         templates.add(JsonOps.JSON_BUILD_OBJECT, "jsonb_build_object({0})");

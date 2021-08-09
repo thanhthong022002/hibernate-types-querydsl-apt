@@ -38,6 +38,10 @@ public class JsonNodeEntity {
 
         List<Integer> embed1_intList;
 
+        Boolean embed1_boolean;
+
+        Integer embed1_int;
+
         public String getEmbed1_attr1() {
             return embed1_attr1;
         }
@@ -60,6 +64,22 @@ public class JsonNodeEntity {
 
         public void setEmbed1_intList(List<Integer> embed1_intList) {
             this.embed1_intList = embed1_intList;
+        }
+
+        public Boolean getEmbed1_boolean() {
+            return embed1_boolean;
+        }
+
+        public void setEmbed1_boolean(Boolean embed1_boolean) {
+            this.embed1_boolean = embed1_boolean;
+        }
+
+        public Integer getEmbed1_int() {
+            return embed1_int;
+        }
+
+        public void setEmbed1_int(Integer embed1_int) {
+            this.embed1_int = embed1_int;
         }
     }
 
