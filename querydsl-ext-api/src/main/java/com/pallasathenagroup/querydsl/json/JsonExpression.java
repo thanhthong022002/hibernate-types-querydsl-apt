@@ -7,10 +7,13 @@ import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.Ops;
 import com.querydsl.core.types.Visitor;
 import com.querydsl.core.types.dsl.*;
+import com.vladmihalcea.hibernate.type.array.StringArrayType;
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 import org.hibernate.jpa.TypedParameterValue;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class JsonExpression<T> extends SimpleExpression<T> {
 
@@ -36,7 +39,7 @@ public class JsonExpression<T> extends SimpleExpression<T> {
     }
 
     public BooleanExpression contains(Object object) {
-        return contains(constant(object));
+        return contains(jsonbConstant(object));
     }
 
     public JsonOperation<JsonNode> get(Expression<?> key) {
@@ -52,8 +55,12 @@ public class JsonExpression<T> extends SimpleExpression<T> {
         return get(Expressions.constant(index));
     }
 
-    public JsonExpression<JsonNode> get(String key) {
-        return get(Expressions.constant(key));
+    public JsonExpression<JsonNode> get(String... key) {
+        String[] keys = Arrays.stream(Arrays.stream(key)
+                        .collect(Collectors.joining("."))
+                        .split("\\."))
+                .toArray(String[]::new);
+        return get(arrayConstant(keys));
     }
 
     public StringExpression asText() {
@@ -79,11 +86,11 @@ public class JsonExpression<T> extends SimpleExpression<T> {
     public <A> JsonOperation<ArrayNode> concat(A... other) {
         // convert to list, since array will cause
         // IllegalArgumentException: Encountered array-valued parameter binding, but was expecting
-        return concat(constant(List.of(other)));
+        return concat(jsonbConstant(List.of(other)));
     }
 
     public <A> JsonOperation<ArrayNode> concat(List<A> other) {
-        return concat(constant(other));
+        return concat(jsonbConstant(other));
     }
 
     public final NumberExpression<Integer> size() {
@@ -98,13 +105,22 @@ public class JsonExpression<T> extends SimpleExpression<T> {
         return Expressions.stringOperation(JsonOps.ELEMENTS, mixin);
     }
 
-    public JsonExpression<?> constant(Object object) {
+    public JsonExpression<?> jsonbConstant(Object object) {
         return new JsonExpression<>(
                 Expressions.constant(
                     new TypedParameterValue(
                             JsonBinaryType.INSTANCE,
                             object
                     )
+                )
+        );
+    }
+
+    public Expression<TypedParameterValue> arrayConstant(String... keys) {
+        return Expressions.constant(
+                new TypedParameterValue(
+                        StringArrayType.INSTANCE,
+                        keys
                 )
         );
     }

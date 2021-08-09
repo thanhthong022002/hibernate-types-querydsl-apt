@@ -4,10 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.BooleanNode;
-import com.fasterxml.jackson.databind.node.IntNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.node.*;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.pallasathenagroup.querydsl.json.JsonExpressions;
@@ -119,12 +116,23 @@ public class JsonNodePathTest extends BaseTestContainersTest {
                     .from(jsonNodeEntity)
                     .select(
                             jsonNodeEntity.jsonNode.get("a"),
-                            jsonNodeEntity.embed1.get("embed1_boolean")
+                            jsonNodeEntity.embed1.get("embed1_boolean"),
+                            jsonNodeEntity.embed1.get("embed1_attr2", "embed2_attr1"),
+                            jsonNodeEntity.embed1.get("embed1_attr2", "embed2_attr1")
+                                    .asText().eq("embed2_attr1"),
+                            jsonNodeEntity.embed1.get("embed1_attr2.embed2_attr1")
+                                    .asText().eq("embed2_attr1"),
+                            jsonNodeEntity.embed1.get(NEmbed1.embed1.embed1_attr2.embed2_attr1)
+                                    .asText().eq("embed2_attr1")
                     )
                     .fetchOne();
 
             assertEquals(IntNode.valueOf(123), result.get(0, Object.class));
             assertEquals(BooleanNode.TRUE, result.get(1, Object.class));
+            assertEquals(TextNode.valueOf("embed2_attr1"), result.get(2, Object.class));
+            assertEquals(true, result.get(3, Object.class));
+            assertEquals(true, result.get(4, Object.class));
+            assertEquals(true, result.get(5, Object.class));
         });
     }
 
