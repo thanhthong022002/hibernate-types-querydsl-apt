@@ -42,13 +42,13 @@ public class ExtendedJPAConfiguration extends DefaultConfiguration {
         this.annotations = getAnnotations();
         this.types = processingEnv.getTypeUtils();
 
-        this.codegenModule.bind(DefaultNameClassSerializer.class, DefaultNameClassSerializer.class);
+        this.codegenModule.bind(NameClassSerializer.class, DefaultNameClassSerializer.class);
         setStrictMode(true);
     }
 
     @Override
     public NameClassSerializer getNameClassSerializer() {
-        return codegenModule.get(DefaultNameClassSerializer.class);
+        return codegenModule.get(NameClassSerializer.class);
     }
 
     @SuppressWarnings("unchecked")

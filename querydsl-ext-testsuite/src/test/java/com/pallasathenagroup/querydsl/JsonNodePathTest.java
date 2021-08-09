@@ -104,10 +104,10 @@ public class JsonNodePathTest extends BaseTestContainersTest {
             List<Tuple> result = new JPAQuery<JsonNodeEntity>(entityManager, ExtendedHQLTemplates.DEFAULT)
                     .from(jsonNodeEntity)
                     .select(
-                            embed1.containsKey("embed1_attr1"),
-                            embed1.contains(Map.of("embed1_attr1", "embed1_attr1")),
-                            embed1.get("embed1_attr2")
-                                    .contains(Map.of("embed2_attr1", "embed2_attr1"))
+                            embed1.containsKey(NEmbed1.embed1.embed1_attr1),
+                            embed1.contains(Map.of(NEmbed1.embed1.embed1_attr1, "embed1_attr1")),
+                            embed1.get(NEmbed1.embed1.embed1_attr2.path())
+                                    .contains(Map.of(NEmbed2.embed2.embed2_attr1, "embed2_attr1"))
                     )
                     .fetch();
 
@@ -144,13 +144,11 @@ public class JsonNodePathTest extends BaseTestContainersTest {
                             tuple.get(2, ArrayNode.class),
                             new TypeReference<List<Integer>>() {})
             );
-            /*
-            Don't know why return null
             assertEquals(List.of(1, 2, 3, 4, 1, 2, 3),
                     objectMapper.convertValue(
                             tuple.get(3, ArrayNode.class),
                             new TypeReference<List<Integer>>() {})
-            );*/
+            );
         });
     }
 
