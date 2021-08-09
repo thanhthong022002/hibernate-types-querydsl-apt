@@ -42,6 +42,7 @@ public class JsonNodePathTest extends BaseTestContainersTest {
             entity = new JsonNodeEntity();
             entity.jsonNode = objectMapper.valueToTree(ImmutableMap.of("a", 123));
             entity.listInt = List.of(1, 2, 3, 4);
+            entity.intNumber = 1;
 
             JsonNodeEntity.Embed1 e1 = new JsonNodeEntity.Embed1();
             e1.embed1_attr1 = "embed1_attr1";
@@ -81,11 +82,16 @@ public class JsonNodePathTest extends BaseTestContainersTest {
                             jsonNodeEntity.id,
                             jsonNodeEntity.embed1.get("embed1_int")
                                     .asNumber(Integer.class)
-                                    .in(1, 2, 4)
+                                    .in(1, 2, 4),
+                            jsonNodeEntity.intNumber.eq(
+                                    jsonNodeEntity.embed1
+                                            .get("embed1_int").asInteger()
+                            )
                     )
                     .fetchOne();
 
             assertEquals(true, result.get(1, Object.class));
+            assertEquals(true, result.get(2, Object.class));
         });
     }
 

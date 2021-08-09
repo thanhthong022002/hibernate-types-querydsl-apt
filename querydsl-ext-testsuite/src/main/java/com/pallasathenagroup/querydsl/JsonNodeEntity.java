@@ -29,6 +29,9 @@ public class JsonNodeEntity {
     @Column(name = "list_int", columnDefinition = "jsonb")
     List<Integer> listInt;
 
+    @Column(name = "int_number")
+    Integer intNumber;
+
     @NameClass
     public static final class Embed1 {
 
