@@ -8,6 +8,7 @@ import org.hibernate.annotations.TypeDef;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)
@@ -32,6 +33,9 @@ public class JsonNodeEntity {
     @Column(name = "int_number")
     Integer intNumber;
 
+    @Column(name = "uuid")
+    UUID uuid;
+
     @NameClass
     public static final class Embed1 {
 
@@ -44,6 +48,8 @@ public class JsonNodeEntity {
         Boolean embed1_boolean;
 
         Integer embed1_int;
+
+        String uuidText;
 
         public String getEmbed1_attr1() {
             return embed1_attr1;
@@ -83,6 +89,14 @@ public class JsonNodeEntity {
 
         public void setEmbed1_int(Integer embed1_int) {
             this.embed1_int = embed1_int;
+        }
+
+        public String getUuidText() {
+            return uuidText;
+        }
+
+        public void setUuidText(String uuidText) {
+            this.uuidText = uuidText;
         }
     }
 

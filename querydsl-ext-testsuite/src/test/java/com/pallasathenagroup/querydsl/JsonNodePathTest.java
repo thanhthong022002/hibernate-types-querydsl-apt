@@ -10,12 +10,14 @@ import com.google.common.collect.ImmutableMap;
 import com.pallasathenagroup.querydsl.json.JsonExpressions;
 import com.pallasathenagroup.querydsl.json.JsonPath;
 import com.querydsl.core.Tuple;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import static com.pallasathenagroup.querydsl.QJsonNodeEntity.jsonNodeEntity;
 import static org.hibernate.testing.transaction.TransactionUtil.doInJPA;
@@ -40,12 +42,14 @@ public class JsonNodePathTest extends BaseTestContainersTest {
             entity.jsonNode = objectMapper.valueToTree(ImmutableMap.of("a", 123));
             entity.listInt = List.of(1, 2, 3, 4);
             entity.intNumber = 1;
+            entity.uuid = UUID.randomUUID();
 
             JsonNodeEntity.Embed1 e1 = new JsonNodeEntity.Embed1();
             e1.embed1_attr1 = "embed1_attr1";
             e1.embed1_intList = List.of(1, 2, 3);
             e1.embed1_boolean = true;
             e1.embed1_int = 1;
+            e1.uuidText = entity.uuid.toString();
             entity.embed1 = e1;
 
             JsonNodeEntity.Embed2 e2 = new JsonNodeEntity.Embed2();
@@ -123,7 +127,9 @@ public class JsonNodePathTest extends BaseTestContainersTest {
                             jsonNodeEntity.embed1.get("embed1_attr2.embed2_attr1")
                                     .asText().eq("embed2_attr1"),
                             jsonNodeEntity.embed1.get(NEmbed1.embed1.embed1_attr2.embed2_attr1)
-                                    .asText().eq("embed2_attr1")
+                                    .asText().eq("embed2_attr1"),
+                            jsonNodeEntity.embed1.get("uuidText").asText()
+                                    .contains(Expressions.stringPath(jsonNodeEntity.uuid.getMetadata()))
                     )
                     .fetchOne();
 
@@ -167,7 +173,8 @@ public class JsonNodePathTest extends BaseTestContainersTest {
                                         NEmbed1.embed1.embed1_intList,
                                         List.of(1)
                                     )
-                            )
+                            ),
+                            jsonNodeEntity.listInt.contains(1)
                     )
                     .fetch();
 
@@ -176,6 +183,7 @@ public class JsonNodePathTest extends BaseTestContainersTest {
             assertEquals(true, tuple.get(1, Object.class));
             assertEquals(true, tuple.get(2, Object.class));
             assertEquals(true, tuple.get(3, Object.class));
+            assertEquals(true, tuple.get(4, Object.class));
         });
     }
 
