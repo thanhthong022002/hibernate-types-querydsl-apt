@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.*;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
 import com.pallasathenagroup.querydsl.json.JsonExpressions;
 import com.pallasathenagroup.querydsl.json.JsonPath;
 import com.querydsl.core.Tuple;
@@ -55,6 +56,19 @@ public class JsonNodePathTest extends BaseTestContainersTest {
             JsonNodeEntity.Embed2 e2 = new JsonNodeEntity.Embed2();
             e2.embed2_attr1 = "embed2_attr1";
             e1.embed1_attr2 = e2;
+
+            // embed1 list
+            JsonNodeEntity.Embed1 e1_1 = new JsonNodeEntity.Embed1();
+            e1_1.embed1_attr1 = "embed1_attr1";
+            e1_1.embed1_intList = List.of(1, 2, 3);
+            e1_1.embed1_boolean = true;
+            e1_1.embed1_int = 1;
+            JsonNodeEntity.Embed1 e1_2 = new JsonNodeEntity.Embed1();
+            e1_2.embed1_attr1 = "embed1_attr1";
+            e1_2.embed1_intList = List.of(1, 2, 3);
+            e1_2.embed1_boolean = true;
+            e1_2.embed1_int = 1;
+            entity.embed1List = Lists.newArrayList(e1_1, e1_2);
 
             entityManager.persist(entity);
         });
@@ -129,7 +143,9 @@ public class JsonNodePathTest extends BaseTestContainersTest {
                             jsonNodeEntity.embed1.get(NEmbed1.embed1.embed1_attr2.embed2_attr1)
                                     .asText().eq("embed2_attr1"),
                             jsonNodeEntity.embed1.get("uuidText").asText()
-                                    .contains(Expressions.stringPath(jsonNodeEntity.uuid.getMetadata()))
+                                    .contains(Expressions.stringPath(jsonNodeEntity.uuid.getMetadata())),
+
+                            jsonNodeEntity.embed1.get("embed1_boolean").asBoolean()
                     )
                     .fetchOne();
 
@@ -139,6 +155,7 @@ public class JsonNodePathTest extends BaseTestContainersTest {
             assertEquals(true, result.get(3, Object.class));
             assertEquals(true, result.get(4, Object.class));
             assertEquals(true, result.get(5, Object.class));
+            assertEquals(true, result.get(6, Object.class));
         });
     }
 
@@ -161,6 +178,12 @@ public class JsonNodePathTest extends BaseTestContainersTest {
         doInJPA(this::sessionFactory, entityManager -> {
             JsonPath<JsonNodeEntity.Embed1> embed1 = jsonNodeEntity.embed1;
 
+            JsonNodeEntity.Embed1 e1_1 = new JsonNodeEntity.Embed1();
+            e1_1.embed1_attr1 = "embed1_attr1";
+            e1_1.embed1_intList = List.of(1, 2, 3);
+            e1_1.embed1_boolean = true;
+            e1_1.embed1_int = 1;
+
             List<Tuple> result = new JPAQuery<JsonNodeEntity>(entityManager)
                     .from(jsonNodeEntity)
                     .select(
@@ -174,7 +197,8 @@ public class JsonNodePathTest extends BaseTestContainersTest {
                                         List.of(1)
                                     )
                             ),
-                            jsonNodeEntity.listInt.contains(1)
+                            jsonNodeEntity.listInt.contains(1),
+                            jsonNodeEntity.embed1List.contains(Lists.newArrayList(e1_1))
                     )
                     .fetch();
 
@@ -184,6 +208,7 @@ public class JsonNodePathTest extends BaseTestContainersTest {
             assertEquals(true, tuple.get(2, Object.class));
             assertEquals(true, tuple.get(3, Object.class));
             assertEquals(true, tuple.get(4, Object.class));
+            assertEquals(true, tuple.get(5, Object.class));
         });
     }
 

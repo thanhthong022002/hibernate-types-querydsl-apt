@@ -2,6 +2,7 @@ package com.pallasathenagroup.querydsl.json;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.pallasathenagroup.querydsl.CommonOps;
 import com.querydsl.core.types.ConstantImpl;
 import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.Ops;
@@ -73,6 +74,10 @@ public class JsonExpression<T> extends SimpleExpression<T> {
 
     public NumberExpression<Integer> asInteger() {
         return asNumber(Integer.class);
+    }
+
+    public BooleanExpression asBoolean() {
+        return Expressions.predicate(CommonOps.CAST, mixin, ConstantImpl.create("boolean"));
     }
 
     public NumberExpression<Long> asLong() {

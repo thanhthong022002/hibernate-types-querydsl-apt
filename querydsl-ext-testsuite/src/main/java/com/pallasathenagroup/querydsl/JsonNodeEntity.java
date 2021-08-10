@@ -36,6 +36,10 @@ public class JsonNodeEntity {
     @Column(name = "uuid")
     UUID uuid;
 
+    @Column(name = "embed1_list", columnDefinition = "jsonb")
+    @Type(type = "jsonb")
+    List<Embed1> embed1List;
+
     @NameClass
     public static final class Embed1 {
 
