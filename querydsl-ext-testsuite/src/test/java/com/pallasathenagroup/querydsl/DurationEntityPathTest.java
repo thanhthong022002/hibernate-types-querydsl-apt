@@ -38,7 +38,7 @@ public class DurationEntityPathTest extends BaseCoreFunctionalTestCase {
     public void durationTest() {
         doInJPA(this::sessionFactory, entityManager -> {
             LocalDateTime now = LocalDateTime.now();
-            List<DurationEntity> fetch = new JPAQuery<RangeEntity>(entityManager, ExtendedHQLTemplates.DEFAULT)
+            List<DurationEntity> fetch = new JPAQuery<RangeEntity>(entityManager)
                 .from(durationEntity).select(durationEntity)
                 .where(durationEntity.duration.ne(Duration.ofHours(2)))
                 .where(durationEntity.duration.multiply(6).divide(2.0).gt(Duration.ofHours(1)))

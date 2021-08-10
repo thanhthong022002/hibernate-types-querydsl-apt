@@ -37,7 +37,7 @@ public class RangeEntityPathTest extends BaseCoreFunctionalTestCase {
         doInJPA(this::sessionFactory, entityManager -> {
             Range<LocalDateTime> other = Range.closedOpen(LocalDate.of(2019, 1, 1).atStartOfDay(), LocalDate.of(2021, 1, 1).atStartOfDay());
 
-            List<RangeEntity> fetch = new JPAQuery<RangeEntity>(entityManager, ExtendedHQLTemplates.DEFAULT).from(rangeEntity).select(rangeEntity)
+            List<RangeEntity> fetch = new JPAQuery<RangeEntity>(entityManager).from(rangeEntity).select(rangeEntity)
                 .where(rangeEntity.localDateTimeRange.overlaps(other))
                 .where(HibernateTypesExpressions.createRangeExpression(other).eq(other))
                 .fetch();
@@ -49,7 +49,7 @@ public class RangeEntityPathTest extends BaseCoreFunctionalTestCase {
     @Test
     public void selectLower() {
         doInJPA(this::sessionFactory, entityManager -> {
-            List<LocalDateTime> fetch = new JPAQuery<RangeEntity>(entityManager, ExtendedHQLTemplates.DEFAULT)
+            List<LocalDateTime> fetch = new JPAQuery<RangeEntity>(entityManager)
                     .from(rangeEntity)
                     .select(rangeEntity.localDateTimeRange.lower())
                     .fetch();
@@ -61,7 +61,7 @@ public class RangeEntityPathTest extends BaseCoreFunctionalTestCase {
     @Test
     public void selectUpper() {
         doInJPA(this::sessionFactory, entityManager -> {
-            List<LocalDateTime> fetch = new JPAQuery<RangeEntity>(entityManager, ExtendedHQLTemplates.DEFAULT)
+            List<LocalDateTime> fetch = new JPAQuery<RangeEntity>(entityManager)
                     .from(rangeEntity)
                     .select(rangeEntity.localDateTimeRange.upper())
                     .fetch();
@@ -74,7 +74,7 @@ public class RangeEntityPathTest extends BaseCoreFunctionalTestCase {
     public void rangeEntityPathContainedByTest() {
         doInJPA(this::sessionFactory, entityManager -> {
             Range<LocalDateTime> other = Range.closedOpen(LocalDate.of(2019, 1, 1).atStartOfDay(), LocalDate.of(2021, 1, 1).atStartOfDay());
-            List<RangeEntity> fetch = new JPAQuery<RangeEntity>(entityManager, ExtendedHQLTemplates.DEFAULT).from(rangeEntity).select(rangeEntity)
+            List<RangeEntity> fetch = new JPAQuery<RangeEntity>(entityManager).from(rangeEntity).select(rangeEntity)
                 .where(rangeEntity.localDateTimeRange.isContainedBy(other))
                 .fetch();
 
@@ -86,7 +86,7 @@ public class RangeEntityPathTest extends BaseCoreFunctionalTestCase {
     public void rangeEntityPathUnionTest() {
         doInJPA(this::sessionFactory, entityManager -> {
             Range<LocalDateTime> other = Range.closedOpen(LocalDate.of(2019, 1, 1).atStartOfDay(), LocalDate.of(2021, 1, 1).atStartOfDay());
-            List<Range<LocalDateTime>> fetch = new JPAQuery<RangeEntity>(entityManager, ExtendedHQLTemplates.DEFAULT).from(rangeEntity)
+            List<Range<LocalDateTime>> fetch = new JPAQuery<RangeEntity>(entityManager).from(rangeEntity)
                     .select(rangeEntity.localDateTimeRange.union(other).intersection(rangeEntity.localDateTimeRange))
                     .fetch();
 
@@ -98,7 +98,7 @@ public class RangeEntityPathTest extends BaseCoreFunctionalTestCase {
     public void rangeEntityPathDifferenceTest() {
         doInJPA(this::sessionFactory, entityManager -> {
             Range<LocalDateTime> other = Range.closedOpen(LocalDate.of(2019, 1, 1).atStartOfDay(), LocalDate.of(2021, 1, 1).atStartOfDay());
-            List<Range<LocalDateTime>> fetch = new JPAQuery<RangeEntity>(entityManager, ExtendedHQLTemplates.DEFAULT).from(rangeEntity)
+            List<Range<LocalDateTime>> fetch = new JPAQuery<RangeEntity>(entityManager).from(rangeEntity)
                     .select(rangeEntity.localDateTimeRange.difference(other).union(rangeEntity.localDateTimeRange))
                     .fetch();
 
@@ -109,7 +109,7 @@ public class RangeEntityPathTest extends BaseCoreFunctionalTestCase {
     @Test
     public void selectDateUtils() {
         doInJPA(this::sessionFactory, entityManager -> {
-            List<Tuple> fetch = new JPAQuery<RangeEntity>(entityManager, ExtendedHQLTemplates.DEFAULT)
+            List<Tuple> fetch = new JPAQuery<RangeEntity>(entityManager)
                     .from(rangeEntity)
                     .select(
 //                            HibernateTypesExpressions.yearMonth(Expressions.asDate(rangeEntity.localDateTimeRange.lower())),

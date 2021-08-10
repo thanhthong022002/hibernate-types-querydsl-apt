@@ -50,7 +50,7 @@ public class ArrayEntityPathTest extends BaseTestContainersTest {
     @Test
     public void testArrayPaths() {
         doInJPA(this.buildEmf(), entityManager -> {
-            List<Tuple> fetch = new JPAQuery<>(entityManager, ExtendedHQLTemplates.DEFAULT)
+            List<Tuple> fetch = new JPAQuery<>(entityManager)
                     .from(arrayEntity).select(
                             arrayEntity.sensorValues.get(0),
                             arrayEntity.sensorValues.append(5),
@@ -98,7 +98,7 @@ public class ArrayEntityPathTest extends BaseTestContainersTest {
     @Test
     public void testArrayAgg() {
         doInJPA(this.buildEmf(), entityManager -> {
-            new JPAQuery<>(entityManager, ExtendedHQLTemplates.DEFAULT)
+            new JPAQuery<>(entityManager)
                     .from(arrayEntity)
                     .select(HibernateTypesExpressions.arrayAgg(arrayEntity.sensorStates.get(0)))
                     .fetch();

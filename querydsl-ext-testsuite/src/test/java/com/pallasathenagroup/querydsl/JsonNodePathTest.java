@@ -63,7 +63,7 @@ public class JsonNodePathTest extends BaseTestContainersTest {
     @Test
     public void getFieldAsText() {
         doInJPA(this::sessionFactory, entityManager -> {
-            String result = new JPAQuery<JsonNodeEntity>(entityManager, ExtendedHQLTemplates.DEFAULT)
+            String result = new JPAQuery<JsonNodeEntity>(entityManager)
                     .from(jsonNodeEntity)
                     .select(
                             jsonNodeEntity.jsonNode.get("a").asText()
@@ -77,7 +77,7 @@ public class JsonNodePathTest extends BaseTestContainersTest {
     @Test
     public void cast() {
         doInJPA(this::sessionFactory, entityManager -> {
-            Tuple result = new JPAQuery<JsonNodeEntity>(entityManager, ExtendedHQLTemplates.DEFAULT)
+            Tuple result = new JPAQuery<JsonNodeEntity>(entityManager)
                     .from(jsonNodeEntity)
                     .select(
                             jsonNodeEntity.id,
@@ -99,7 +99,7 @@ public class JsonNodePathTest extends BaseTestContainersTest {
     @Test
     public void size() {
         doInJPA(this::sessionFactory, entityManager -> {
-            Tuple result = new JPAQuery<JsonNodeEntity>(entityManager, ExtendedHQLTemplates.DEFAULT)
+            Tuple result = new JPAQuery<JsonNodeEntity>(entityManager)
                     .from(jsonNodeEntity)
                     .select(
                             jsonNodeEntity.id,
@@ -116,7 +116,7 @@ public class JsonNodePathTest extends BaseTestContainersTest {
     @Test
     public void getFieldAsNode() {
         doInJPA(this::sessionFactory, entityManager -> {
-            Tuple result = new JPAQuery<JsonNode>(entityManager, ExtendedHQLTemplates.DEFAULT)
+            Tuple result = new JPAQuery<JsonNode>(entityManager)
                     .from(jsonNodeEntity)
                     .select(
                             jsonNodeEntity.jsonNode.get("a"),
@@ -145,7 +145,7 @@ public class JsonNodePathTest extends BaseTestContainersTest {
     @Test
     public void getKeys() {
         doInJPA(this::sessionFactory, entityManager -> {
-            List<String> result = new JPAQuery<JsonNodeEntity>(entityManager, ExtendedHQLTemplates.DEFAULT)
+            List<String> result = new JPAQuery<JsonNodeEntity>(entityManager)
                     .from(jsonNodeEntity)
                     .select(
                             jsonNodeEntity.jsonNode.keys()
@@ -161,7 +161,7 @@ public class JsonNodePathTest extends BaseTestContainersTest {
         doInJPA(this::sessionFactory, entityManager -> {
             JsonPath<JsonNodeEntity.Embed1> embed1 = jsonNodeEntity.embed1;
 
-            List<Tuple> result = new JPAQuery<JsonNodeEntity>(entityManager, ExtendedHQLTemplates.DEFAULT)
+            List<Tuple> result = new JPAQuery<JsonNodeEntity>(entityManager)
                     .from(jsonNodeEntity)
                     .select(
                             embed1.containsKey(NEmbed1.embed1.embed1_attr1),
@@ -192,7 +192,7 @@ public class JsonNodePathTest extends BaseTestContainersTest {
         doInJPA(this::sessionFactory, entityManager -> {
             JsonPath<JsonNodeEntity.Embed1> embed1 = jsonNodeEntity.embed1;
 
-            List<Tuple> result = new JPAQuery<JsonNodeEntity>(entityManager, ExtendedHQLTemplates.DEFAULT)
+            List<Tuple> result = new JPAQuery<JsonNodeEntity>(entityManager)
                     .from(jsonNodeEntity)
                     .select(
                             jsonNodeEntity.id,
@@ -225,7 +225,7 @@ public class JsonNodePathTest extends BaseTestContainersTest {
     @Test
     public void buildJsonObject() {
         doInJPA(this::sessionFactory, entityManager -> {
-            ObjectNode result = new JPAQuery<JsonNodeEntity>(entityManager, ExtendedHQLTemplates.DEFAULT)
+            ObjectNode result = new JPAQuery<JsonNodeEntity>(entityManager)
                     .from(jsonNodeEntity)
                     .select(
                             JsonExpressions.buildJsonObject(jsonNodeEntity.id.as("id"), jsonNodeEntity.id.as("id2"))
@@ -243,7 +243,7 @@ public class JsonNodePathTest extends BaseTestContainersTest {
     @Test
     public void buildJsonObject2() {
         doInJPA(this::sessionFactory, entityManager -> {
-            ObjectNode result = new JPAQuery<JsonNodeEntity>(entityManager, ExtendedHQLTemplates.DEFAULT)
+            ObjectNode result = new JPAQuery<JsonNodeEntity>(entityManager)
                     .from(jsonNodeEntity)
                     .select(
                             JsonExpressions.buildJsonObject(ImmutableMap.of("id", jsonNodeEntity.id, "id2", jsonNodeEntity.id))

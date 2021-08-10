@@ -45,6 +45,8 @@ public abstract class BaseTestContainersTest {
                 properties.setProperty(Environment.URL, POSTGRE_SQL_CONTAINER.getJdbcUrl());
                 properties.setProperty(Environment.PASS, POSTGRE_SQL_CONTAINER.getPassword());
                 properties.setProperty(Environment.USER, POSTGRE_SQL_CONTAINER.getUsername());
+                properties.setProperty("hibernate.metadata_builder_contributor",
+                        "com.pallasathenagroup.querydsl.GlobalMetadataBuilderContributor");
 
 
 //                PGSimpleDataSource dataSource = new PGSimpleDataSource();
