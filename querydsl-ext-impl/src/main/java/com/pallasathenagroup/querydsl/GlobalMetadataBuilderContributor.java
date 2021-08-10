@@ -1,5 +1,6 @@
 package com.pallasathenagroup.querydsl;
 
+import com.querydsl.jpa.HQLTemplates;
 import com.querydsl.jpa.impl.JPAProvider;
 import org.hibernate.boot.MetadataBuilder;
 import org.hibernate.boot.spi.MetadataBuilderContributor;
@@ -18,6 +19,7 @@ public class GlobalMetadataBuilderContributor implements MetadataBuilderContribu
         JPAProvider.addMapping("org.hibernate.Session", ExtendedHQLTemplates.DEFAULT);
         JPAProvider.addMapping("org.hibernate.ejb.HibernateEntityManager", ExtendedHQLTemplates.DEFAULT);
         JPAProvider.addMapping("org.hibernate.jpa.HibernateEntityManager", ExtendedHQLTemplates.DEFAULT);
+        HQLTemplates.DEFAULT = ExtendedHQLTemplates.DEFAULT;
     }
 
     @Override
