@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.pallasathenagroup.querydsl.ArrayEntity.SensorState;
 import com.querydsl.core.Tuple;
 import com.querydsl.jpa.impl.JPAQuery;
+import com.querydsl.jpa.impl.JPAUpdateClause;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -29,6 +30,8 @@ public class ArrayEntityPathTest extends BaseTestContainersTest {
     @Before
     public void setUp() {
         doInJPA(this.buildEmf(), entityManager -> {
+            entityManager.createQuery("delete from ArrayEntity j").executeUpdate();
+
             Date date1 = Date.from(LocalDate.of(1991, 12, 31).atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
             Date date2 = Date.from(LocalDate.of(1990, 1, 1).atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
 
@@ -102,6 +105,25 @@ public class ArrayEntityPathTest extends BaseTestContainersTest {
                     .from(arrayEntity)
                     .select(HibernateTypesExpressions.arrayAgg(arrayEntity.sensorStates.get(0)))
                     .fetch();
+        });
+    }
+
+    @Test
+    public void update() {
+        doInJPA(this::sessionFactory, entityManager -> {
+            long result = new JPAUpdateClause(entityManager, arrayEntity)
+                    .set(arrayEntity.sensorNames,
+                            arrayEntity.sensorNames.concat(arrayEntity.sensorNameStr)
+                    )
+                    .execute();
+
+            assertEquals(1, result);
+
+            ArrayEntity entity = new JPAQuery<ArrayEntity>(entityManager)
+                    .from(arrayEntity)
+                    .fetchOne();
+            assertArrayEquals(new String[] {"Temperature", "Pressure", "Thong", "Nguyen"},
+                    entity.sensorNames);
         });
     }
 }

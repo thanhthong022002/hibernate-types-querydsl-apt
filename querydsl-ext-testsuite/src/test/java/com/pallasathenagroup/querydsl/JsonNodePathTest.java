@@ -282,4 +282,23 @@ public class JsonNodePathTest extends BaseTestContainersTest {
             }
         });
     }
+
+    @Test
+    public void update() {
+        doInJPA(this::sessionFactory, entityManager -> {
+            long result = new ExtendJpaUpdateClause(entityManager, jsonNodeEntity)
+                    .set(jsonNodeEntity.listInt,
+                        jsonNodeEntity.listInt.concat(jsonNodeEntity.embed1.get("embed1_intList"))
+                    )
+                    .execute();
+
+            assertEquals(1, result);
+
+            JsonNodeEntity entity = new JPAQuery<JsonNodeEntity>(entityManager)
+                    .from(QJsonNodeEntity.jsonNodeEntity)
+                    .fetchOne();
+            assertEquals(Lists.newArrayList(1, 2, 3, 4, 1, 2, 3),
+                    entity.listInt);
+        });
+    }
 }
