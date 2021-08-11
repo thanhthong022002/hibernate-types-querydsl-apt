@@ -22,7 +22,7 @@ public class JsonFunctionInitializer implements MetadataBuilderInitializer {
     @Override
     public void contribute(MetadataBuilder metadataBuilder, StandardServiceRegistry standardServiceRegistry) {
         metadataBuilder.applySqlFunction("JSON_CONTAINS_KEY", new SQLFunctionTemplate(BooleanType.INSTANCE, "?1->?2 IS NOT NULL"));
-        metadataBuilder.applySqlFunction("JSON_CONTAINS", new SQLFunctionTemplate(BooleanType.INSTANCE, "?1 @> ?2"));
+        metadataBuilder.applySqlFunction("JSON_CONTAINS", new SQLFunctionTemplate(BooleanType.INSTANCE, "(?1 @> ?2)"));
         metadataBuilder.applySqlFunction("JSON_GET", new SQLFunctionTemplate(JSON_NODE_TYPE, "(?1#>?2)"));
         metadataBuilder.applySqlFunction("JSON_GET_TEXT", new SQLFunctionTemplate(StringType.INSTANCE, "?1#>>?2"));
         metadataBuilder.applySqlFunction("JSON_CONCAT", new SQLFunctionTemplate(ARRAY_NODE_TYPE, "?1 || ?2"));

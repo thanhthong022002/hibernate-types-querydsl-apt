@@ -36,7 +36,7 @@ public class JsonExpression<T> extends SimpleExpression<T> {
     }
 
     public BooleanExpression contains(JsonExpression<?> object) {
-        return Expressions.predicate(JsonOps.CONTAINS, this, object);
+        return Expressions.booleanOperation(JsonOps.CONTAINS, mixin, object);
     }
 
     public BooleanExpression contains(Object object) {
