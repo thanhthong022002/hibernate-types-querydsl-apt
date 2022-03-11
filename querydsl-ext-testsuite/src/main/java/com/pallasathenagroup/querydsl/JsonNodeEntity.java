@@ -40,6 +40,18 @@ public class JsonNodeEntity {
     @Type(type = "jsonb")
     List<Embed1> embed1List;
 
+    @Type(type = "jsonb")
+    @Column(name = "null_1", columnDefinition = "jsonb")
+    JsonNode null_1;
+
+    @Type(type = "jsonb")
+    @Column(name = "null_2", columnDefinition = "jsonb")
+    JsonNode null_2;
+
+    @Type(type = "jsonb")
+    @Column(name = "not_null", columnDefinition = "jsonb")
+    JsonNode not_null;
+
     @NameClass
     public static final class Embed1 {
 

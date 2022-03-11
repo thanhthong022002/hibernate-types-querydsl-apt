@@ -2,6 +2,7 @@ package com.pallasathenagroup.querydsl.json;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.NullNode;
 import com.pallasathenagroup.querydsl.CommonOps;
 import com.querydsl.core.types.ConstantImpl;
 import com.querydsl.core.types.Expression;
@@ -17,6 +18,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class JsonExpression<T> extends SimpleExpression<T> {
+
+    private transient volatile BooleanExpression isnull, isnotnull;
 
     public JsonExpression(Expression<T> mixin) {
         super(mixin);
@@ -106,8 +109,30 @@ public class JsonExpression<T> extends SimpleExpression<T> {
         return Expressions.stringOperation(JsonOps.KEYS, mixin);
     }
 
-    public final StringExpression elements() {
-        return Expressions.stringOperation(JsonOps.ELEMENTS, mixin);
+    public final JsonOperation<JsonNode> elements() {
+        return new JsonOperation<>(Expressions.operation(JsonNode.class, JsonOps.ELEMENTS, mixin));
+    }
+
+    @Override
+    public BooleanExpression isNull() {
+        if (isnull == null) {
+            isnull = Expressions.anyOf(
+                super.isNull(),
+                eq((T) NullNode.instance)
+            );
+        }
+        return isnull;
+    }
+
+    @Override
+    public BooleanExpression isNotNull() {
+        if (isnotnull == null) {
+            isnotnull = Expressions.allOf(
+                super.isNotNull(),
+                ne((T) NullNode.instance)
+            );
+        }
+        return isnotnull;
     }
 
     public JsonExpression<?> jsonbConstant(Object object) {

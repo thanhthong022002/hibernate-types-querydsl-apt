@@ -14,6 +14,7 @@ import com.querydsl.jpa.JPQLSerializer;
 import com.querydsl.jpa.JPQLTemplates;
 import com.querydsl.jpa.impl.JPAProvider;
 import com.querydsl.jpa.impl.JPAUtil;
+import org.hibernate.query.internal.QueryImpl;
 
 import javax.persistence.EntityManager;
 import javax.persistence.LockModeType;
@@ -49,7 +50,9 @@ public class ExtendJpaUpdateClause implements UpdateClause<ExtendJpaUpdateClause
         JPQLSerializer serializer = new JPQLSerializer(templates, entityManager);
         serializer.serializeForUpdate(queryMixin.getMetadata(), updates);
 
-        Query query = entityManager.createQuery(serializer.toString());
+        // use custom query impl to allow set List as a value, instead of `list of values`
+        Query query = new ExtendQueryImpl<>(
+                (QueryImpl) entityManager.createQuery(serializer.toString()));
         if (lockMode != null) {
             query.setLockMode(lockMode);
         }
@@ -69,6 +72,22 @@ public class ExtendJpaUpdateClause implements UpdateClause<ExtendJpaUpdateClause
 
     @Override
     public <T> ExtendJpaUpdateClause set(Path<T> path, Expression<? extends T> expression) {
+        if (expression != null) {
+            updates.put(path, expression);
+        } else {
+            setNull(path);
+        }
+        return this;
+    }
+
+    /**
+     * A tricky way to use when set value of type {@link org.hibernate.jpa.TypedParameterValue}
+     * @param path
+     * @param expression
+     * @param <T>
+     * @return
+     */
+    public <T> ExtendJpaUpdateClause setRaw(Path<T> path, Expression<?> expression) {
         if (expression != null) {
             updates.put(path, expression);
         } else {

@@ -59,18 +59,30 @@ public class HibernateTypeMappings extends JavaTypeMappings {
                                 Collections.singletonList(type));
                         return jsonb;
                     } else if (targetType.equals("array")) {
+                        boolean isList = typeValue.equals("list-array");
                         Type param1 = type.getParameters().size() > 0 ?
                                 type.getParameters().get(0) : type.getComponentType();
 
-                        SimpleType enumType = new SimpleType(param1.getFullName(), param1.getPackageName(), param1.getSimpleName());
-                        Type enumArrayType = enumType.asArrayType();
-                        Class arrayPathClass = PostgresqlArrayPath.class;
+                        if (isList) {
+                            System.out.println(param1.getFullName());
+                            SimpleType enumType = new SimpleType(param1.getFullName(), param1.getPackageName(), param1.getSimpleName());
 
-                        return new SimpleType(
-                                arrayPathClass.getName(),
-                                arrayPathClass.getPackage().getName(),
-                                arrayPathClass.getSimpleName(),
-                                enumArrayType, wrap(enumType));
+                            return new SimpleType(new SimpleType(PostgresqlArrayPath.class.getName()),
+                                    type, enumType);
+                        }
+                        else {
+                            SimpleType enumType = new SimpleType(param1.getFullName(), param1.getPackageName(), param1.getSimpleName());
+                            Type enumArrayType = enumType.asArrayType();
+                            Class arrayPathClass = PostgresqlArrayPath.class;
+
+                            return new SimpleType(
+                                    arrayPathClass.getName(),
+                                    arrayPathClass.getPackage().getName(),
+                                    arrayPathClass.getSimpleName(),
+                                    enumArrayType,
+                                    wrap(enumType)
+                            );
+                        }
                     }
                 }
             }

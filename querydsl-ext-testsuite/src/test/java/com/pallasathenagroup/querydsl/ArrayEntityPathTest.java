@@ -3,8 +3,13 @@ package com.pallasathenagroup.querydsl;
 import com.google.common.collect.Lists;
 import com.pallasathenagroup.querydsl.ArrayEntity.SensorState;
 import com.querydsl.core.Tuple;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAUpdateClause;
+import com.vladmihalcea.hibernate.type.array.ListArrayType;
+import com.vladmihalcea.hibernate.type.array.internal.AbstractArrayType;
+import org.hibernate.jpa.TypedParameterValue;
+import org.hibernate.usertype.DynamicParameterizedType;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -12,13 +17,13 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
+import java.util.Properties;
 import java.util.UUID;
 
 import static com.pallasathenagroup.querydsl.HibernateTypesExpressions.createArrayExpression;
 import static com.pallasathenagroup.querydsl.QArrayEntity.arrayEntity;
 import static org.hibernate.testing.transaction.TransactionUtil.doInJPA;
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 public class ArrayEntityPathTest extends BaseTestContainersTest {
 
@@ -109,11 +114,11 @@ public class ArrayEntityPathTest extends BaseTestContainersTest {
     }
 
     @Test
-    public void update() {
+    public void updateByExpression() {
         doInJPA(this::sessionFactory, entityManager -> {
             long result = new JPAUpdateClause(entityManager, arrayEntity)
-                    .set(arrayEntity.sensorNames,
-                            arrayEntity.sensorNames.concat(arrayEntity.sensorNameStr)
+                    .set(arrayEntity.sensorNameStr,
+                            arrayEntity.sensorNameStr.concat(arrayEntity.sensorNameStr)
                     )
                     .execute();
 
@@ -122,8 +127,48 @@ public class ArrayEntityPathTest extends BaseTestContainersTest {
             ArrayEntity entity = new JPAQuery<ArrayEntity>(entityManager)
                     .from(arrayEntity)
                     .fetchOne();
-            assertArrayEquals(new String[] {"Temperature", "Pressure", "Thong", "Nguyen"},
-                    entity.sensorNames);
+            assertTrue(List.of("Thong", "Nguyen", "Thong", "Nguyen").equals(entity.sensorNameStr));
+        });
+    }
+
+    @Test
+    public void updateByValue_useListDirectly() {
+        doInJPA(this::sessionFactory, entityManager -> {
+            long result = new ExtendJpaUpdateClause(entityManager, arrayEntity)
+                    .set(arrayEntity.sensorNameStr, List.of("test"))
+                    .execute();
+
+            assertEquals(1, result);
+
+            ArrayEntity entity = new JPAQuery<ArrayEntity>(entityManager)
+                    .from(arrayEntity)
+                    .fetchOne();
+            assertTrue(List.of("test").equals(entity.sensorNameStr));
+        });
+    }
+
+    @Test
+    public void updateByValue_useTypedParameterValue() {
+        doInJPA(this::sessionFactory, entityManager -> {
+            var type = new ListArrayType();
+            Properties props = new Properties();
+            props.setProperty(AbstractArrayType.SQL_ARRAY_TYPE, "text");
+            props.setProperty(DynamicParameterizedType.ENTITY, ArrayEntity.class.getName());
+            props.setProperty(DynamicParameterizedType.PROPERTY, "sensorNameStr");
+            type.setParameterValues(props);
+
+            long result = new ExtendJpaUpdateClause(entityManager, arrayEntity)
+                    .setRaw(arrayEntity.sensorNameStr, Expressions.constant(new TypedParameterValue(
+                            type, List.of("test"))
+                    ))
+                    .execute();
+
+            assertEquals(1, result);
+
+            ArrayEntity entity = new JPAQuery<ArrayEntity>(entityManager)
+                    .from(arrayEntity)
+                    .fetchOne();
+            assertTrue(List.of("test").equals(entity.sensorNameStr));
         });
     }
 }

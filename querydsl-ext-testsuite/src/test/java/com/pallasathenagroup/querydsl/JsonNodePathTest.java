@@ -16,6 +16,7 @@ import com.querydsl.jpa.impl.JPAQuery;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -69,6 +70,17 @@ public class JsonNodePathTest extends BaseTestContainersTest {
             e1_2.embed1_boolean = true;
             e1_2.embed1_int = 1;
             entity.embed1List = Lists.newArrayList(e1_1, e1_2);
+
+            // null value
+            // to check missing property
+            entity.null_1 = objectMapper.valueToTree(ImmutableMap.of());
+            // to check property is null
+            Map<String, Object> nullValue = new HashMap<>();
+            nullValue.put("test", null);
+            entity.null_2 = objectMapper.valueToTree(nullValue);
+
+            // not null value
+            entity.not_null = objectMapper.valueToTree(Map.of("test", 1));
 
             entityManager.persist(entity);
         });
@@ -246,6 +258,37 @@ public class JsonNodePathTest extends BaseTestContainersTest {
         });
     }
 
+    @Test
+    public void checkNull() {
+        doInJPA(this::sessionFactory, entityManager -> {
+            List<Integer> result = new JPAQuery<JsonNodeEntity>(entityManager)
+                    .from(jsonNodeEntity)
+                    .select(Expressions.ONE)
+                    .where(
+                            jsonNodeEntity.null_1.get("test").isNull()
+                            .and(jsonNodeEntity.null_2.get("test").isNull())
+                    )
+                    .fetch();
+
+            assertEquals(new Integer(1), result.get(0));
+        });
+    }
+
+    @Test
+    public void checkNotNull() {
+        doInJPA(this::sessionFactory, entityManager -> {
+            List<Integer> result = new JPAQuery<JsonNodeEntity>(entityManager)
+                    .from(jsonNodeEntity)
+                    .select(Expressions.ONE)
+                    .where(
+                            jsonNodeEntity.not_null.get("test").isNotNull()
+                            .and(jsonNodeEntity.not_null.get("test").isNull().not())
+                    )
+                    .fetch();
+
+            assertEquals(new Integer(1), result.get(0));
+        });
+    }
 
     @Test
     public void buildJsonObject() {

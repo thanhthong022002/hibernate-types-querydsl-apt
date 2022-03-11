@@ -19,7 +19,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- * Collect name of hibernate types, to dynamic convert field with that tye
+ * Collect name of hibernate types, to dynamic convert field with that type
  * mainly for array, jsonb. The others follow normal process of type resolving.
  */
 public class HibernateTypeSupport implements Extension {

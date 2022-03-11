@@ -11,7 +11,7 @@ public enum JsonOps implements Operator {
     CONTAINS_KEY(Boolean.class),
     MAP_SIZE(Object.class),
     KEYS(String.class),
-    ELEMENTS(String.class),
+    ELEMENTS(Object.class),
     CONCAT(Object.class),
     DELETE_KEY(Object.class),
     DELETE_INDEX(String.class),
