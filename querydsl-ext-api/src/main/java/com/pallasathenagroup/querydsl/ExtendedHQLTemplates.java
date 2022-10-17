@@ -90,6 +90,7 @@ public class ExtendedHQLTemplates extends HQLTemplates {
         templates.add(YearMonthOps.CAST_YEAR, "CAST_YEAR({0})");
 
         templates.add(CommonOps.CAST, "cast({0} as {1s})");
+        templates.add(CommonOps.AS_TEXT, "AS_TEXT({0})");
     }
 
 }

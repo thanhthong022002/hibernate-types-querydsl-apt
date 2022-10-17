@@ -8,22 +8,23 @@ import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAUpdateClause;
 import com.vladmihalcea.hibernate.type.array.ListArrayType;
 import com.vladmihalcea.hibernate.type.array.internal.AbstractArrayType;
-import org.hibernate.jpa.TypedParameterValue;
-import org.hibernate.usertype.DynamicParameterizedType;
-import org.junit.Before;
-import org.junit.Test;
-
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 import java.util.UUID;
+import org.hibernate.jpa.TypedParameterValue;
+import org.hibernate.usertype.DynamicParameterizedType;
+import org.junit.Before;
+import org.junit.Test;
 
 import static com.pallasathenagroup.querydsl.HibernateTypesExpressions.createArrayExpression;
 import static com.pallasathenagroup.querydsl.QArrayEntity.arrayEntity;
 import static org.hibernate.testing.transaction.TransactionUtil.doInJPA;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class ArrayEntityPathTest extends BaseTestContainersTest {
 
@@ -44,7 +45,7 @@ public class ArrayEntityPathTest extends BaseTestContainersTest {
             arrayEntity.setId(1L);
             arrayEntity.setSensorIds(new UUID[]{UUID.fromString("c65a3bcb-8b36-46d4-bddb-ae96ad016eb1"), UUID.fromString("72e95717-5294-4c15-aa64-a3631cf9a800")});
             arrayEntity.setSensorNames(new String[]{"Temperature", "Pressure"});
-            arrayEntity.setSensorNameStr(Lists.newArrayList("Thong", "Nguyen"));
+            arrayEntity.setSensorNameStr(Lists.newArrayList("Thong", "Nguyen", "Thông", "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."));
             arrayEntity.setSensorValues(new int[]{12, 756});
             arrayEntity.setSensorLongValues(new long[]{42L, 9223372036854775800L});
             arrayEntity.setSensorDoubleValues(new double[]{0.123, 456.789});
@@ -76,7 +77,9 @@ public class ArrayEntityPathTest extends BaseTestContainersTest {
                             // extend
                             arrayEntity.sensorValues.overlaps(Lists.newArrayList(12, 14)),
                             arrayEntity.sensorNameStr.overlaps(Lists.newArrayList("Thong", "Thanh")),
-                            arrayEntity.sensorNameStr.contains(Lists.newArrayList("Thong"))
+                            arrayEntity.sensorNameStr.contains(Lists.newArrayList("Thong")),
+                            arrayEntity.sensorNameStr.asText().contains("Thô"),
+                            arrayEntity.sensorNameStr.asText().contains("Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.")
                             )
                     .where(createArrayExpression(1, 2).contains(createArrayExpression(1,2 )))
                     .fetch();
@@ -99,6 +102,8 @@ public class ArrayEntityPathTest extends BaseTestContainersTest {
             assertEquals(true, tuple.get(12, Object.class));
             assertEquals(true, tuple.get(13, Object.class));
             assertEquals(true, tuple.get(14, Object.class));
+            assertEquals(true, tuple.get(15, Object.class));
+            assertEquals(true, tuple.get(16, Object.class));
         });
     }
 

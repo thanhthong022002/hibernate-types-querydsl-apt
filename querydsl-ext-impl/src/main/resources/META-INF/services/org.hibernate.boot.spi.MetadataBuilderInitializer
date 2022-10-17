@@ -5,3 +5,4 @@ com.pallasathenagroup.querydsl.PeriodFunctionInitializer
 com.pallasathenagroup.querydsl.YearMonthFunctionInitializer
 com.pallasathenagroup.querydsl.JsonFunctionInitializer
 com.pallasathenagroup.querydsl.HstoreFunctionInitializer
+com.pallasathenagroup.querydsl.CommonFunctionInitializer
