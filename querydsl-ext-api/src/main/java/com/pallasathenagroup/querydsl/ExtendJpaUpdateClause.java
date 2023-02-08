@@ -14,20 +14,24 @@ import com.querydsl.jpa.JPQLSerializer;
 import com.querydsl.jpa.JPQLTemplates;
 import com.querydsl.jpa.impl.JPAProvider;
 import com.querydsl.jpa.impl.JPAUtil;
-import org.hibernate.query.internal.QueryImpl;
-
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import javax.persistence.EntityManager;
 import javax.persistence.LockModeType;
 import javax.persistence.Query;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import org.hibernate.query.internal.QueryImpl;
 
 public class ExtendJpaUpdateClause implements UpdateClause<ExtendJpaUpdateClause> {
 
     private final QueryMixin<?> queryMixin = new JPAQueryMixin<Void>();
 
     private final Map<Path<?>, Expression<?>> updates = new LinkedHashMap<>();
+    private final Set<JsonUpdatePair> jsonUpdates = new LinkedHashSet<>();
 
     private final EntityManager entityManager;
 
@@ -47,8 +51,8 @@ public class ExtendJpaUpdateClause implements UpdateClause<ExtendJpaUpdateClause
 
     @Override
     public long execute() {
-        JPQLSerializer serializer = new JPQLSerializer(templates, entityManager);
-        serializer.serializeForUpdate(queryMixin.getMetadata(), updates);
+        ExtendJPQLSerializer serializer = new ExtendJPQLSerializer(templates, entityManager);
+        serializer.serializeForUpdate(queryMixin.getMetadata(), updates, jsonUpdates);
 
         // use custom query impl to allow set List as a value, instead of `list of values`
         Query query = new ExtendQueryImpl<>(
@@ -105,6 +109,12 @@ public class ExtendJpaUpdateClause implements UpdateClause<ExtendJpaUpdateClause
         return this;
     }
 
+    public ExtendJpaUpdateClause set(JsonPath<?> path, String jsonPath, Object expression) {
+        var innerPath = jsonPath.split("\\.");
+        jsonUpdates.add(new JsonUpdatePair(path, innerPath, expression));
+        return this;
+    }
+
     @Override
     public <T> ExtendJpaUpdateClause setNull(Path<T> path) {
         updates.put(path, Expressions.nullExpression(path));
@@ -147,5 +157,32 @@ public class ExtendJpaUpdateClause implements UpdateClause<ExtendJpaUpdateClause
     @Override
     public boolean isEmpty() {
         return updates.isEmpty();
+    }
+
+    public static final class JsonUpdatePair {
+        public JsonPath field;
+        public String[] path;
+        public Object value;
+
+        public JsonUpdatePair(JsonPath field, String[] path, Object value) {
+            this.field = field;
+            this.path = path;
+            this.value = value;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            JsonUpdatePair that = (JsonUpdatePair) o;
+            return field.equals(that.field) && Arrays.equals(path, that.path);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = Objects.hash(field);
+            result = 31 * result + Arrays.hashCode(path);
+            return result;
+        }
     }
 }

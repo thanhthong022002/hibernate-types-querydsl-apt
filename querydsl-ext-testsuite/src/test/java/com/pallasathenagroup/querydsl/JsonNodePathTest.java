@@ -4,7 +4,11 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.*;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.BooleanNode;
+import com.fasterxml.jackson.databind.node.IntNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.node.TextNode;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
@@ -13,13 +17,12 @@ import com.pallasathenagroup.querydsl.json.JsonPath;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQuery;
-import org.junit.Before;
-import org.junit.Test;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import org.junit.Before;
+import org.junit.Test;
 
 import static com.pallasathenagroup.querydsl.QJsonNodeEntity.jsonNodeEntity;
 import static org.hibernate.testing.transaction.TransactionUtil.doInJPA;
@@ -270,7 +273,7 @@ public class JsonNodePathTest extends BaseTestContainersTest {
                     )
                     .fetch();
 
-            assertEquals(new Integer(1), result.get(0));
+            assertEquals(Integer.valueOf(1), result.get(0));
         });
     }
 
@@ -286,7 +289,7 @@ public class JsonNodePathTest extends BaseTestContainersTest {
                     )
                     .fetch();
 
-            assertEquals(new Integer(1), result.get(0));
+            assertEquals(Integer.valueOf(1), result.get(0));
         });
     }
 
@@ -330,9 +333,12 @@ public class JsonNodePathTest extends BaseTestContainersTest {
     public void update() {
         doInJPA(this::sessionFactory, entityManager -> {
             long result = new ExtendJpaUpdateClause(entityManager, jsonNodeEntity)
-                    .set(jsonNodeEntity.listInt,
-                        jsonNodeEntity.listInt.concat(jsonNodeEntity.embed1.get("embed1_intList"))
-                    )
+                    .set(jsonNodeEntity.embed1, "embed1_intList", List.of(1,2,3,4,5))
+//                    .set(jsonNodeEntity.embed1, "embed1_int", 100)
+//                    .set(jsonNodeEntity.embed1, "embed1_boolean", null)
+//                    .set(jsonNodeEntity.embed1, "embed1_attr1", "value_via_update")
+//                    .set(jsonNodeEntity.embed1, "embed1_attr2.embed2_attr1", "value_via_update")
+//                    .set(jsonNodeEntity.embed1, "embed1_intList", jsonNodeEntity.listInt.concat(4, 5))
                     .execute();
 
             assertEquals(1, result);
@@ -340,8 +346,14 @@ public class JsonNodePathTest extends BaseTestContainersTest {
             JsonNodeEntity entity = new JPAQuery<JsonNodeEntity>(entityManager)
                     .from(QJsonNodeEntity.jsonNodeEntity)
                     .fetchOne();
-            assertEquals(Lists.newArrayList(1, 2, 3, 4, 1, 2, 3),
-                    entity.listInt);
+            assertEquals(Lists.newArrayList(1, 2, 3, 4, 5), entity.embed1.embed1_intList);
+//            assertEquals(100, entity.embed1.embed1_int.longValue());
+//            assertEquals(null, entity.embed1.embed1_boolean);
+//            assertEquals("value_via_update", entity.embed1.embed1_attr1);
+//            assertEquals("value_via_update", entity.embed1.embed1_attr2.embed2_attr1);
+//            assertEquals(Lists.newArrayList(1, 2, 3, 4, 5), entity.embed1.embed1_intList);
+
+            // TODO update multiple field of json field
         });
     }
 }
