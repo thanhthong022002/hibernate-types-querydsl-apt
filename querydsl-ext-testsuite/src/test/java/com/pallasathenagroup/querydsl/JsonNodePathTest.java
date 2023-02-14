@@ -333,12 +333,12 @@ public class JsonNodePathTest extends BaseTestContainersTest {
     public void update() {
         doInJPA(this::sessionFactory, entityManager -> {
             long result = new ExtendJpaUpdateClause(entityManager, jsonNodeEntity)
-                    .set(jsonNodeEntity.embed1, "embed1_intList", List.of(1,2,3,4,5))
+//                    .set(jsonNodeEntity.embed1, "embed1_intList", List.of(1,2,3,4,5))
 //                    .set(jsonNodeEntity.embed1, "embed1_int", 100)
 //                    .set(jsonNodeEntity.embed1, "embed1_boolean", null)
 //                    .set(jsonNodeEntity.embed1, "embed1_attr1", "value_via_update")
 //                    .set(jsonNodeEntity.embed1, "embed1_attr2.embed2_attr1", "value_via_update")
-//                    .set(jsonNodeEntity.embed1, "embed1_intList", jsonNodeEntity.listInt.concat(4, 5))
+                    .set(jsonNodeEntity.embed1, "embed1_intList", jsonNodeEntity.listInt.concat(5))
                     .execute();
 
             assertEquals(1, result);
@@ -346,12 +346,12 @@ public class JsonNodePathTest extends BaseTestContainersTest {
             JsonNodeEntity entity = new JPAQuery<JsonNodeEntity>(entityManager)
                     .from(QJsonNodeEntity.jsonNodeEntity)
                     .fetchOne();
-            assertEquals(Lists.newArrayList(1, 2, 3, 4, 5), entity.embed1.embed1_intList);
+//            assertEquals(Lists.newArrayList(1, 2, 3, 4, 5), entity.embed1.embed1_intList);
 //            assertEquals(100, entity.embed1.embed1_int.longValue());
 //            assertEquals(null, entity.embed1.embed1_boolean);
 //            assertEquals("value_via_update", entity.embed1.embed1_attr1);
 //            assertEquals("value_via_update", entity.embed1.embed1_attr2.embed2_attr1);
-//            assertEquals(Lists.newArrayList(1, 2, 3, 4, 5), entity.embed1.embed1_intList);
+            assertEquals(Lists.newArrayList(1, 2, 3, 4, 5), entity.embed1.embed1_intList);
 
             // TODO update multiple field of json field
         });

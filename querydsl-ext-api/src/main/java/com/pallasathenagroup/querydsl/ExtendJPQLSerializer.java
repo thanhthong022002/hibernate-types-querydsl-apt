@@ -62,10 +62,11 @@ public class ExtendJPQLSerializer extends JPQLSerializer {
                     throw new RuntimeException(e);
                 }
             }
-            var value = new TypedParameterValue(
-                    JsonBinaryType.INSTANCE,
-                    rawValue == null ? NullNode.instance : rawValue
-            );
+            var value = rawValue instanceof Expression ? rawValue :
+                    new TypedParameterValue(
+                        JsonBinaryType.INSTANCE,
+                        rawValue == null ? NullNode.instance : rawValue
+                    );
 
             handle(entry.field);
             append(" = ");
