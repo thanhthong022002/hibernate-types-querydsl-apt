@@ -339,6 +339,7 @@ public class JsonNodePathTest extends BaseTestContainersTest {
 //                    .set(jsonNodeEntity.embed1, "embed1_attr1", "value_via_update")
 //                    .set(jsonNodeEntity.embed1, "embed1_attr2.embed2_attr1", "value_via_update")
                     .set(jsonNodeEntity.embed1, "embed1_intList", jsonNodeEntity.listInt.concat(5))
+                    .where(jsonNodeEntity.id.in(1, 2, 3))
                     .execute();
 
             assertEquals(1, result);

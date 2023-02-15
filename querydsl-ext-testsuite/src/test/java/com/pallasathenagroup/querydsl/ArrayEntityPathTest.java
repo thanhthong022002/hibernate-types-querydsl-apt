@@ -10,6 +10,7 @@ import com.vladmihalcea.hibernate.type.array.ListArrayType;
 import com.vladmihalcea.hibernate.type.array.internal.AbstractArrayType;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
@@ -122,8 +123,8 @@ public class ArrayEntityPathTest extends BaseTestContainersTest {
     public void updateByExpression() {
         doInJPA(this::sessionFactory, entityManager -> {
             long result = new JPAUpdateClause(entityManager, arrayEntity)
-                    .set(arrayEntity.sensorNameStr,
-                            arrayEntity.sensorNameStr.concat(arrayEntity.sensorNameStr)
+                    .set(arrayEntity.sensorNames,
+                            arrayEntity.sensorNames.concat(arrayEntity.sensorNames)
                     )
                     .execute();
 
@@ -132,7 +133,7 @@ public class ArrayEntityPathTest extends BaseTestContainersTest {
             ArrayEntity entity = new JPAQuery<ArrayEntity>(entityManager)
                     .from(arrayEntity)
                     .fetchOne();
-            assertTrue(List.of("Thong", "Nguyen", "Thong", "Nguyen").equals(entity.sensorNameStr));
+            assertTrue(Arrays.equals(new String[] {"Temperature", "Pressure", "Temperature", "Pressure"}, entity.sensorNames));
         });
     }
 
@@ -141,6 +142,23 @@ public class ArrayEntityPathTest extends BaseTestContainersTest {
         doInJPA(this::sessionFactory, entityManager -> {
             long result = new ExtendJpaUpdateClause(entityManager, arrayEntity)
                     .set(arrayEntity.sensorNameStr, List.of("test"))
+                    .execute();
+
+            assertEquals(1, result);
+
+            ArrayEntity entity = new JPAQuery<ArrayEntity>(entityManager)
+                    .from(arrayEntity)
+                    .fetchOne();
+            assertTrue(List.of("test").equals(entity.sensorNameStr));
+        });
+    }
+
+    @Test
+    public void updateByValue_useListDirectlyWithWhere() {
+        doInJPA(this::sessionFactory, entityManager -> {
+            long result = new ExtendJpaUpdateClause(entityManager, arrayEntity)
+                    .set(arrayEntity.sensorNameStr, List.of("test"))
+                    .where(arrayEntity.id.in(1, 2))
                     .execute();
 
             assertEquals(1, result);

@@ -7,7 +7,7 @@
     <groupId>com.pallasathenagroup.querydsl</groupId>
     <artifactId>querydsl-ext</artifactId>
     <packaging>pom</packaging>
-    <version>10.0.4</version>
+    <version>10.0.5</version>
     <modules>
         <module>querydsl-ext-apt</module>
         <module>querydsl-ext-api</module>

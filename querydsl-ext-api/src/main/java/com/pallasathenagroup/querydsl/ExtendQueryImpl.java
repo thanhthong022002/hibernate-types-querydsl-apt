@@ -1,5 +1,7 @@
 package com.pallasathenagroup.querydsl;
 
+import com.vladmihalcea.hibernate.type.array.ListArrayType;
+import java.util.Collection;
 import org.hibernate.engine.query.spi.HQLQueryPlan;
 import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.jpa.TypedParameterValue;
@@ -30,12 +32,20 @@ public class ExtendQueryImpl<R> extends QueryImpl<R> {
             final TypedParameterValue typedParameterValue = (TypedParameterValue) value;
             setParameter( position, typedParameterValue.getValue(), typedParameterValue.getType() );
         }
-        /*else if ( value instanceof Collection && !isRegisteredAsBasicType( value.getClass() ) ) {
+        else if ( value instanceof Collection && getQueryParameterBindings()
+                .getBinding( position ).getBindType().getClass().isAssignableFrom(ListArrayType.class)) {
+            getQueryParameterBindings().getBinding( position ).setBindValue( value );
+        }
+        else if ( value instanceof Collection && !isRegisteredAsBasicType( value.getClass() ) ) {
             setParameterList( getParameterMetadata().getQueryParameter( position ), (Collection) value );
-        }*/
+        }
         else {
             getQueryParameterBindings().getBinding( position ).setBindValue( value );
         }
         return this;
+    }
+
+    private boolean isRegisteredAsBasicType(Class cl) {
+        return getProducer().getFactory().getTypeResolver().basic( cl.getName() ) != null;
     }
 }
