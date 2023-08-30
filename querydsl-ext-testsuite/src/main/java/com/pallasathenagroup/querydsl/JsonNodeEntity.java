@@ -21,7 +21,9 @@ public class JsonNodeEntity {
     @Type(type = "jsonb")
     @Column(columnDefinition = "jsonb")
     JsonNode jsonNode;
-
+    @Type(type = "jsonb")
+    @Column(columnDefinition = "jsonb")
+    String jsonNode2;
     @Type(type = "jsonb")
     @Column(name = "embed_1", columnDefinition = "jsonb")
     Embed1 embed1;
@@ -30,6 +32,13 @@ public class JsonNodeEntity {
     @Column(name = "list_int", columnDefinition = "jsonb")
     List<Integer> listInt;
 
+    @Type(type = "jsonb")
+    @Column(name = "list_int2", columnDefinition = "jsonb")
+    List<Integer> listInt2;
+
+    @Type(type = "jsonb")
+    @Column(name = "list_int3", columnDefinition = "jsonb")
+    List<Integer> listInt3;
     @Column(name = "int_number")
     Integer intNumber;
 
@@ -39,6 +48,10 @@ public class JsonNodeEntity {
     @Column(name = "embed1_list", columnDefinition = "jsonb")
     @Type(type = "jsonb")
     List<Embed1> embed1List;
+
+    @Column(name = "embed2_list", columnDefinition = "jsonb")
+    @Type(type = "jsonb")
+    List<Embed2> embed2List;
 
     @Type(type = "jsonb")
     @Column(name = "null_1", columnDefinition = "jsonb")
