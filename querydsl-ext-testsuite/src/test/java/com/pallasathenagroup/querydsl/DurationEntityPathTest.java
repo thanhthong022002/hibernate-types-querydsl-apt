@@ -1,6 +1,5 @@
 package com.pallasathenagroup.querydsl;
 
-import com.google.common.collect.Range;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import org.hibernate.testing.junit4.BaseCoreFunctionalTestCase;
@@ -9,12 +8,10 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.time.Duration;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
 import static com.pallasathenagroup.querydsl.QDurationEntity.durationEntity;
-import static com.pallasathenagroup.querydsl.QRangeEntity.rangeEntity;
 import static org.hibernate.testing.transaction.TransactionUtil.doInJPA;
 
 public class DurationEntityPathTest extends BaseCoreFunctionalTestCase {

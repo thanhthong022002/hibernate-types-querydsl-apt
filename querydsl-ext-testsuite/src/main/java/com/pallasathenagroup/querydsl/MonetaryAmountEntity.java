@@ -3,13 +3,12 @@ package com.pallasathenagroup.querydsl;
 import org.hibernate.annotations.Columns;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
+import org.jadira.usertype.moneyandcurrency.moneta.PersistentMoneyAmountAndCurrency;
 
 import javax.money.MonetaryAmount;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import org.jadira.usertype.moneyandcurrency.moneta.PersistentMoneyAmountAndCurrency;
-
 import java.math.BigDecimal;
 
 @Entity

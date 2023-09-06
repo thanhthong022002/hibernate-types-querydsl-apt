@@ -8,7 +8,11 @@ import org.testcontainers.containers.PostgreSQLContainer;
 
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.spi.PersistenceUnitInfo;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 

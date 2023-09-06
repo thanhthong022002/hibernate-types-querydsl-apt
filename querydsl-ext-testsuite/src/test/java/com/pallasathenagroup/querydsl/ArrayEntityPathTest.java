@@ -8,6 +8,11 @@ import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAUpdateClause;
 import com.vladmihalcea.hibernate.type.array.ListArrayType;
 import com.vladmihalcea.hibernate.type.array.internal.AbstractArrayType;
+import org.hibernate.jpa.TypedParameterValue;
+import org.hibernate.usertype.DynamicParameterizedType;
+import org.junit.Before;
+import org.junit.Test;
+
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Arrays;
@@ -15,10 +20,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 import java.util.UUID;
-import org.hibernate.jpa.TypedParameterValue;
-import org.hibernate.usertype.DynamicParameterizedType;
-import org.junit.Before;
-import org.junit.Test;
 
 import static com.pallasathenagroup.querydsl.HibernateTypesExpressions.createArrayExpression;
 import static com.pallasathenagroup.querydsl.QArrayEntity.arrayEntity;

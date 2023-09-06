@@ -4,7 +4,11 @@
 	import com.fasterxml.jackson.core.type.TypeReference;
 	import com.fasterxml.jackson.databind.JsonNode;
 	import com.fasterxml.jackson.databind.ObjectMapper;
-	import com.fasterxml.jackson.databind.node.*;
+	import com.fasterxml.jackson.databind.node.ArrayNode;
+	import com.fasterxml.jackson.databind.node.BooleanNode;
+	import com.fasterxml.jackson.databind.node.IntNode;
+	import com.fasterxml.jackson.databind.node.ObjectNode;
+	import com.fasterxml.jackson.databind.node.TextNode;
 	import com.google.common.collect.ImmutableList;
 	import com.google.common.collect.ImmutableMap;
 	import com.google.common.collect.Lists;
@@ -22,8 +26,12 @@
 	import java.util.UUID;
 
 	import static com.pallasathenagroup.querydsl.QJsonNodeEntity.jsonNodeEntity;
+
 	import static org.hibernate.testing.transaction.TransactionUtil.doInJPA;
-	import static org.junit.Assert.*;
+	import static org.junit.Assert.assertEquals;
+	import static org.junit.Assert.assertNotNull;
+	import static org.junit.Assert.assertNull;
+
 
 	public class JsonNodePathTest extends BaseTestContainersTest {
 

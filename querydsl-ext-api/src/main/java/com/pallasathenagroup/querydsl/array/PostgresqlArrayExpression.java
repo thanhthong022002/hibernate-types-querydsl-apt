@@ -21,13 +21,14 @@ import com.vladmihalcea.hibernate.type.array.LongArrayType;
 import com.vladmihalcea.hibernate.type.array.StringArrayType;
 import com.vladmihalcea.hibernate.type.array.TimestampArrayType;
 import com.vladmihalcea.hibernate.type.array.UUIDArrayType;
+import org.hibernate.jpa.TypedParameterValue;
+
+import javax.annotation.Nullable;
 import java.lang.reflect.Array;
 import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.Date;
 import java.util.UUID;
-import javax.annotation.Nullable;
-import org.hibernate.jpa.TypedParameterValue;
 
 @SuppressWarnings("unchecked")
 public class PostgresqlArrayExpression<A, T> extends TypedParameterValueSimpleExpression<A> implements ArrayExpression<A, T> {

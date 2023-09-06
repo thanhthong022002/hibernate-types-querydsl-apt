@@ -9,10 +9,11 @@ import com.querydsl.jpa.JPQLSerializer;
 import com.querydsl.jpa.JPQLTemplates;
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 import com.vladmihalcea.hibernate.type.util.Configuration;
+import org.hibernate.jpa.TypedParameterValue;
+
+import javax.persistence.EntityManager;
 import java.util.Map;
 import java.util.Set;
-import javax.persistence.EntityManager;
-import org.hibernate.jpa.TypedParameterValue;
 
 /**
  * Support serialize update a field in jsonb type

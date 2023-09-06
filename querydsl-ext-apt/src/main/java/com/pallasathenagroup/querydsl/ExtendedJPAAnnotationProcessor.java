@@ -7,7 +7,11 @@ import com.querydsl.codegen.TypeMappings;
 
 import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedAnnotationTypes;
-import javax.persistence.*;
+import javax.persistence.Embeddable;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.MappedSuperclass;
+import javax.persistence.Transient;
 import java.lang.annotation.Annotation;
 
 @SupportedAnnotationTypes({"com.querydsl.core.annotations.*", "javax.persistence.*"})

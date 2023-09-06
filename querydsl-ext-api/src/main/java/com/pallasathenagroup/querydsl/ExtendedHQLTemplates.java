@@ -80,7 +80,7 @@
             templates.add(JsonOps.DELETE_PATH, "JSON_DELETE_PATH({0}, {1})");
 
             templates.add(JsonOps.DELETE_INDEX, "JSON_DELETE_INDEX({0}, {1})");
-            templates.add(JsonOps.IS_EMPTY_ARRAY, "jsonb_typeof({0}) = 'array' AND jsonb_array_length({0}) = 0");
+            templates.add(JsonOps.IS_EMPTY_ARRAY, "IS NULL OR (jsonb_typeof({0}) = 'array' AND jsonb_array_length({0}) = 0)");
 
             templates.add(HstoreOps.CONTAINS_KEY, "HSTORE_CONTAINS_KEY({0}, {1})");
             templates.add(HstoreOps.MAP_SIZE, "HSTORE_MAP_SIZE({0})");

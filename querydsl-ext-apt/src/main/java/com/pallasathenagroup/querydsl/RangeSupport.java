@@ -1,12 +1,12 @@
 package com.pallasathenagroup.querydsl;
 
 import com.google.common.collect.Range;
-import com.querydsl.codegen.utils.model.SimpleType;
 import com.pallasathenagroup.querydsl.range.RangePath;
-import com.querydsl.codegen.Extension;
 import com.querydsl.codegen.AbstractModule;
 import com.querydsl.codegen.CodegenModule;
+import com.querydsl.codegen.Extension;
 import com.querydsl.codegen.TypeMappings;
+import com.querydsl.codegen.utils.model.SimpleType;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
