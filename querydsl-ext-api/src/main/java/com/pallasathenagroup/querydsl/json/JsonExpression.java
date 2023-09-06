@@ -171,5 +171,15 @@ public class JsonExpression<T> extends SimpleExpression<T> {
     public JsonOperation<ArrayNode> deleteByIndex(int index){
         return deleteByIndex(Expressions.constant(index));
     }
-
+    public JsonExpression<JsonNode> deleteByPath(String... path) {
+        String[] paths = Arrays.stream(
+                        Arrays.stream(path)
+                                .collect(Collectors.joining("."))
+                                .split("\\."))
+                .toArray(String[]::new);
+        return deleteByPath(arrayConstant(paths));
+    }
+    public JsonOperation<JsonNode> deleteByPath(Expression<?> path) {
+        return new JsonOperation<>(Expressions.operation(JsonNode.class, JsonOps.DELETE_PATH, mixin, path));
+    }
 }

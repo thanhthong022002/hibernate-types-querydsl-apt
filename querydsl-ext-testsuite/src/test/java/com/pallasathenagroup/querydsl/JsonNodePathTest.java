@@ -395,4 +395,17 @@ public class JsonNodePathTest extends BaseTestContainersTest {
                             }));
         });
     }
+    @Test
+    public void testDeletePath()  {
+        doInJPA(this::sessionFactory, entityManager -> {
+            JsonNode expected = null;
+            expected = objectMapper.createArrayNode().add("a").add(objectMapper.createObjectNode());
+            JsonNode result = new JPAQuery<JsonNode>(entityManager)
+                    .from(jsonNodeEntity)
+                    .select(jsonNodeEntity.jsonNode2.deleteByPath("1.b"))
+                    .fetchOne();
+            assertEquals(expected, result);
+        });
+    }
+
 }
