@@ -1,6 +1,14 @@
 package com.pallasathenagroup.querydsl;
 
-import com.vladmihalcea.hibernate.type.array.*;
+import com.vladmihalcea.hibernate.type.array.DateArrayType;
+import com.vladmihalcea.hibernate.type.array.DoubleArrayType;
+import com.vladmihalcea.hibernate.type.array.EnumArrayType;
+import com.vladmihalcea.hibernate.type.array.IntArrayType;
+import com.vladmihalcea.hibernate.type.array.ListArrayType;
+import com.vladmihalcea.hibernate.type.array.LongArrayType;
+import com.vladmihalcea.hibernate.type.array.StringArrayType;
+import com.vladmihalcea.hibernate.type.array.TimestampArrayType;
+import com.vladmihalcea.hibernate.type.array.UUIDArrayType;
 import com.vladmihalcea.hibernate.type.basic.PostgreSQLEnumType;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;

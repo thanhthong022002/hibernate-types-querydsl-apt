@@ -8,7 +8,6 @@ import com.querydsl.codegen.AbstractModule;
 import com.querydsl.codegen.TypeMappings;
 
 import javax.money.MonetaryAmount;
-import java.time.Period;
 
 public class MonetaryAmountSupport implements Extension {
 

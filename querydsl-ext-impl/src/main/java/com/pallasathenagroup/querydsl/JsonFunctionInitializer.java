@@ -26,6 +26,7 @@ public class JsonFunctionInitializer implements MetadataBuilderInitializer {
         metadataBuilder.applySqlFunction("JSON_GET", new SQLFunctionTemplate(JSON_NODE_TYPE, "(?1#>?2)"));
         metadataBuilder.applySqlFunction("JSON_GET_TEXT", new SQLFunctionTemplate(StringType.INSTANCE, "?1#>>?2"));
         metadataBuilder.applySqlFunction("JSON_CONCAT", new SQLFunctionTemplate(ARRAY_NODE_TYPE, "?1 || ?2"));
+        metadataBuilder.applySqlFunction("JSON_DELETE_KEY", new SQLFunctionTemplate(JSON_NODE_TYPE,"?1 - ?2"));
 
         metadataBuilder.applySqlFunction("json_array_length", new StandardSQLFunction("json_array_length", IntegerType.INSTANCE));
         metadataBuilder.applySqlFunction("jsonb_array_length", new StandardSQLFunction("jsonb_array_length", IntegerType.INSTANCE));

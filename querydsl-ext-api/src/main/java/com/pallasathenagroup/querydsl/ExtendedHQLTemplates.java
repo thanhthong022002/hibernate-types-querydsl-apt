@@ -76,6 +76,8 @@ public class ExtendedHQLTemplates extends HQLTemplates {
         templates.add(JsonOps.ELEMENTS, "jsonb_array_elements({0})");
         templates.add(JsonOps.JSON_BUILD_OBJECT, "jsonb_build_object({0})");
         templates.add(JsonOps.JSON_BUILD_ARRAY, "jsonb_build_array({0})");
+        templates.add(JsonOps.DELETE_KEY, "JSON_DELETE_KEY({0}, {1})");
+
 
         templates.add(HstoreOps.CONTAINS_KEY, "HSTORE_CONTAINS_KEY({0}, {1})");
         templates.add(HstoreOps.MAP_SIZE, "HSTORE_MAP_SIZE({0})");

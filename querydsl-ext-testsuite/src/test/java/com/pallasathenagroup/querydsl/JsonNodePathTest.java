@@ -27,6 +27,8 @@ import org.junit.Test;
 import static com.pallasathenagroup.querydsl.QJsonNodeEntity.jsonNodeEntity;
 import static org.hibernate.testing.transaction.TransactionUtil.doInJPA;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 public class JsonNodePathTest extends BaseTestContainersTest {
 

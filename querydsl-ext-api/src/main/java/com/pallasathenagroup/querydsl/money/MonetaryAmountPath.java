@@ -6,13 +6,11 @@ import com.querydsl.core.types.PathMetadata;
 import com.querydsl.core.types.dsl.ComparablePath;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberPath;
-import com.querydsl.core.types.dsl.SimpleExpression;
 
 import javax.money.CurrencyUnit;
 import javax.money.MonetaryAmount;
 import java.lang.reflect.AnnotatedElement;
 import java.math.BigDecimal;
-import java.util.Currency;
 
 public class MonetaryAmountPath extends MonetaryAmountExpression implements Path<MonetaryAmount> {
 
