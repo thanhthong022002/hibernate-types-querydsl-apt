@@ -359,4 +359,19 @@ public class JsonNodePathTest extends BaseTestContainersTest {
             // TODO update multiple field of json field
         });
     }
+    @Test
+    public void testDeleteByKey() {
+        doInJPA(this::sessionFactory, entityManager -> {
+            Long entityId = entity.id;
+
+            JsonNode jsonAfterDelete = new JPAQuery<JsonNode>(entityManager)
+                    .from(jsonNodeEntity)
+                    .select(jsonNodeEntity.jsonNode.deleteByKey("a"))
+                    .where(jsonNodeEntity.id.eq(entityId))
+                    .fetchOne();
+            assertNull(jsonAfterDelete.get("a"));
+            assertNotNull(jsonAfterDelete.get("b"));
+            assertNotNull(jsonAfterDelete.get("c"));
+        });
+    }
 }
