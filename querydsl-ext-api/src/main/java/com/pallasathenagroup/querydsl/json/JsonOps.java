@@ -14,7 +14,7 @@ public enum JsonOps implements Operator {
     ELEMENTS(Object.class),
     CONCAT(Object.class),
     DELETE_KEY(Object.class),
-    DELETE_INDEX(String.class),
+    DELETE_INDEX(Object.class),
     TO_JSON(Object.class),
     ARRAY_TO_JSON(Object.class),
     ROW_TO_JSON(Object.class),

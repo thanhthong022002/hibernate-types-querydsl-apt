@@ -46,10 +46,14 @@ public class JsonNodePathTest extends BaseTestContainersTest {
             entityManager.createQuery("delete from JsonNodeEntity j").executeUpdate();
 
             entity = new JsonNodeEntity();
-            entity.jsonNode = objectMapper.valueToTree(ImmutableMap.of("a", 123));
+            entity.jsonNode = objectMapper.valueToTree(ImmutableMap.of("a", 123, "b", 456, "c", 789));
             entity.listInt = List.of(1, 2, 3, 4);
+            entity.listInt2 = List.of(1,2,3,4,5);
+            entity.listInt3 = List.of();
+            entity.embed2List = Lists.newArrayList();
             entity.intNumber = 1;
             entity.uuid = UUID.randomUUID();
+            entity.jsonNode2= "[\"a\", {\"b\":1}]";
 
             JsonNodeEntity.Embed1 e1 = new JsonNodeEntity.Embed1();
             e1.embed1_attr1 = "embed1_attr1";
@@ -186,7 +190,7 @@ public class JsonNodePathTest extends BaseTestContainersTest {
                     )
                     .fetch();
 
-            assertEquals(ImmutableList.of("a"), result);
+            assertEquals(ImmutableList.of("a", "b", "c"), result);
         });
     }
 
@@ -372,6 +376,23 @@ public class JsonNodePathTest extends BaseTestContainersTest {
             assertNull(jsonAfterDelete.get("a"));
             assertNotNull(jsonAfterDelete.get("b"));
             assertNotNull(jsonAfterDelete.get("c"));
+        });
+    }
+    @Test
+    public void testDeleteByIndex() {
+        doInJPA(this::sessionFactory, entityManager -> {
+            List<Tuple> result = new JPAQuery<JsonNodeEntity>(entityManager)
+                    .from(jsonNodeEntity)
+                    .select(
+                            jsonNodeEntity.id,
+                            jsonNodeEntity.listInt2.deleteByIndex(2))
+                    .fetch();
+            Tuple tuple = result.get(0);
+            assertEquals(List.of(1, 2, 4, 5),
+                    objectMapper.convertValue(
+                            tuple.get(1, ArrayNode.class),
+                            new TypeReference<List<Integer>>() {
+                            }));
         });
     }
 }

@@ -158,4 +158,18 @@ public class JsonExpression<T> extends SimpleExpression<T> {
                 )
         );
     }
+    public JsonOperation<JsonNode> deleteByKey(Expression<String> key){
+        return new JsonOperation<>(Expressions.operation(JsonNode.class, JsonOps.DELETE_KEY, mixin, key));
+    }
+
+    public JsonOperation<JsonNode> deleteByKey(String key){
+        return deleteByKey(Expressions.constant(key));
+    }
+    public JsonOperation<ArrayNode> deleteByIndex(Expression<Integer> index){
+        return new JsonOperation<>(Expressions.operation(ArrayNode.class, JsonOps.DELETE_INDEX, mixin, index));
+    }
+    public JsonOperation<ArrayNode> deleteByIndex(int index){
+        return deleteByIndex(Expressions.constant(index));
+    }
+
 }
