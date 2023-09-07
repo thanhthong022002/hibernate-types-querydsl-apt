@@ -407,5 +407,23 @@ public class JsonNodePathTest extends BaseTestContainersTest {
             assertEquals(expected, result);
         });
     }
+    @Test
+    public void testIsEmptyArrayInWhereClause(){
+        doInJPA(this::sessionFactory, entityManager -> {
+            List<Integer> result = new JPAQuery<JsonNodeEntity>(entityManager)
+                    .from(jsonNodeEntity)
+                    .select(Expressions.ONE)
+                    .where(
+                            jsonNodeEntity.embed2List.isEmptyArray()
+                                    .and(jsonNodeEntity.listInt3.isEmptyArray())
+                                    .and(jsonNodeEntity.listInt2.isEmptyArray().not())
+                                    .and(jsonNodeEntity.null_1.get("test").isEmptyArray())
+                                    .and(jsonNodeEntity.null_2.get("test").isEmptyArray())
+                                    )
+                    .fetch();
+
+            assertEquals(Integer.valueOf(1),result.get(0));
+        });
+    }
 
 }

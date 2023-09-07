@@ -182,4 +182,10 @@ public class JsonExpression<T> extends SimpleExpression<T> {
     public JsonOperation<JsonNode> deleteByPath(Expression<?> path) {
         return new JsonOperation<>(Expressions.operation(JsonNode.class, JsonOps.DELETE_PATH, mixin, path));
     }
+    public BooleanExpression isEmptyArray() {
+        return Expressions.anyOf(
+                this.isNull(),
+                this.size().eq(0));
+    }
+
 }
