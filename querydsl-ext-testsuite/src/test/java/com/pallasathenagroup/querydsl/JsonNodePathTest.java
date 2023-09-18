@@ -27,6 +27,8 @@ import org.junit.Test;
 import static com.pallasathenagroup.querydsl.QJsonNodeEntity.jsonNodeEntity;
 import static org.hibernate.testing.transaction.TransactionUtil.doInJPA;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 public class JsonNodePathTest extends BaseTestContainersTest {
 
@@ -44,10 +46,15 @@ public class JsonNodePathTest extends BaseTestContainersTest {
             entityManager.createQuery("delete from JsonNodeEntity j").executeUpdate();
 
             entity = new JsonNodeEntity();
-            entity.jsonNode = objectMapper.valueToTree(ImmutableMap.of("a", 123));
+            entity.jsonNode = objectMapper.valueToTree(ImmutableMap.of("a", 123, "b", 456, "c", 789));
             entity.listInt = List.of(1, 2, 3, 4);
+            entity.listInt2 = List.of(1,2,3,4,5);
+            entity.listInt3 =  Lists.newArrayList();
+            entity.embed2List = Lists.newArrayList();
             entity.intNumber = 1;
             entity.uuid = UUID.randomUUID();
+            entity.jsonNode2= "[\"a\", {\"b\":1}]";
+            entity.jsonNode3= "{}";
 
             JsonNodeEntity.Embed1 e1 = new JsonNodeEntity.Embed1();
             e1.embed1_attr1 = "embed1_attr1";
@@ -184,7 +191,7 @@ public class JsonNodePathTest extends BaseTestContainersTest {
                     )
                     .fetch();
 
-            assertEquals(ImmutableList.of("a"), result);
+            assertEquals(ImmutableList.of("a", "b", "c"), result);
         });
     }
 
@@ -357,4 +364,114 @@ public class JsonNodePathTest extends BaseTestContainersTest {
             // TODO update multiple field of json field
         });
     }
+
+    @Test
+    public void testDeleteByKey() {
+        doInJPA(this::sessionFactory, entityManager -> {
+            Long entityId = entity.id;
+
+            JsonNode jsonAfterDelete = new JPAQuery<JsonNode>(entityManager)
+                    .from(jsonNodeEntity)
+                    .select(jsonNodeEntity.jsonNode.deleteByKey("a"))
+                    .where(jsonNodeEntity.id.eq(entityId))
+                    .fetchOne();
+            assertNull(jsonAfterDelete.get("a"));
+            assertNotNull(jsonAfterDelete.get("b"));
+            assertNotNull(jsonAfterDelete.get("c"));
+        });
+    }
+
+    @Test
+    public void testDeleteByIndex() {
+        doInJPA(this::sessionFactory, entityManager -> {
+            List<Tuple> result = new JPAQuery<JsonNodeEntity>(entityManager)
+                    .from(jsonNodeEntity)
+                    .select(
+                            jsonNodeEntity.id,
+                            jsonNodeEntity.listInt2.deleteByIndex(2))
+                    .fetch();
+            Tuple tuple = result.get(0);
+            assertEquals(List.of(1, 2, 4, 5),
+                    objectMapper.convertValue(
+                            tuple.get(1, ArrayNode.class),
+                            new TypeReference<List<Integer>>() {
+                            }));
+        });
+    }
+
+    @Test
+    public void testDeletePath() {
+        doInJPA(this::sessionFactory, entityManager -> {
+            JsonNode expected = objectMapper.createArrayNode().add("a").add(objectMapper.createObjectNode());
+            JsonNode result = new JPAQuery<JsonNode>(entityManager)
+                    .from(jsonNodeEntity)
+                    .select(jsonNodeEntity.jsonNode2.deleteByPath("1","b"))
+                    .fetchOne();
+            assertEquals(expected, result);
+        });
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testDeletePathWithEmptyInput() {
+        doInJPA(this::sessionFactory, entityManager -> {
+            JsonNode result = new JPAQuery<JsonNode>(entityManager)
+                    .from(jsonNodeEntity)
+                    .select(jsonNodeEntity.jsonNode2.deleteByPath())
+                    .fetchOne();
+
+        });
+        throw new IllegalArgumentException();
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testDeletePathWithInvalidInput() {
+        doInJPA(this::sessionFactory, entityManager -> {
+            JsonNode result = new JPAQuery<JsonNode>(entityManager)
+                    .from(jsonNodeEntity)
+                    .select(jsonNodeEntity.jsonNode2.deleteByPath("a.b.c", "d", "e.f"))
+                    .fetchOne();
+
+        });
+        throw new IllegalArgumentException();
+    }
+
+    @Test
+    public void testIsArray() {
+        doInJPA(this::sessionFactory, entityManager -> {
+            List<Integer> result = new JPAQuery<JsonNodeEntity>(entityManager)
+                    .from(jsonNodeEntity)
+                    .select(Expressions.ONE)
+                    .where(
+                            jsonNodeEntity.embed2List.isArray()
+                                    .and(jsonNodeEntity.jsonNode3.isArray().not())
+                                    .and(jsonNodeEntity.listInt3.isArray())
+                                    .and(jsonNodeEntity.listInt2.isArray())
+                                    .and(jsonNodeEntity.null_1.get("test").isArray().not())
+                                    .and(jsonNodeEntity.null_2.get("test").isArray().not())
+                    )
+                    .fetch();
+            assertEquals(Integer.valueOf(1), result.get(0));
+        });
+    }
+
+    @Test
+    public void testIsEmptyArrayInWhereClause() {
+        doInJPA(this::sessionFactory, entityManager -> {
+            List<Integer> result = new JPAQuery<JsonNodeEntity>(entityManager)
+                    .from(jsonNodeEntity)
+                    .select(Expressions.ONE)
+                    .where(
+                            jsonNodeEntity.embed2List.isEmptyArray()
+                                    .and(jsonNodeEntity.jsonNode3.isEmptyArray())
+                                    .and(jsonNodeEntity.listInt3.isEmptyArray())
+                                    .and(jsonNodeEntity.listInt2.isEmptyArray().not())
+                                    .and(jsonNodeEntity.null_1.get("test").isEmptyArray())
+                                    .and(jsonNodeEntity.null_2.get("test").isEmptyArray())
+                    )
+                    .fetch();
+
+            assertEquals(Integer.valueOf(1), result.get(0));
+        });
+    }
+
 }
