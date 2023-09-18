@@ -363,6 +363,7 @@ public class JsonNodePathTest extends BaseTestContainersTest {
             // TODO update multiple field of json field
         });
     }
+
     @Test
     public void testDeleteByKey() {
         doInJPA(this::sessionFactory, entityManager -> {
@@ -378,6 +379,7 @@ public class JsonNodePathTest extends BaseTestContainersTest {
             assertNotNull(jsonAfterDelete.get("c"));
         });
     }
+
     @Test
     public void testDeleteByIndex() {
         doInJPA(this::sessionFactory, entityManager -> {
@@ -395,8 +397,9 @@ public class JsonNodePathTest extends BaseTestContainersTest {
                             }));
         });
     }
+
     @Test
-    public void testDeletePath()  {
+    public void testDeletePath() {
         doInJPA(this::sessionFactory, entityManager -> {
             JsonNode expected = null;
             expected = objectMapper.createArrayNode().add("a").add(objectMapper.createObjectNode());
@@ -407,8 +410,9 @@ public class JsonNodePathTest extends BaseTestContainersTest {
             assertEquals(expected, result);
         });
     }
+
     @Test
-    public void testIsEmptyArrayInWhereClause(){
+    public void testIsEmptyArrayInWhereClause() {
         doInJPA(this::sessionFactory, entityManager -> {
             List<Integer> result = new JPAQuery<JsonNodeEntity>(entityManager)
                     .from(jsonNodeEntity)
@@ -419,10 +423,10 @@ public class JsonNodePathTest extends BaseTestContainersTest {
                                     .and(jsonNodeEntity.listInt2.isEmptyArray().not())
                                     .and(jsonNodeEntity.null_1.get("test").isEmptyArray())
                                     .and(jsonNodeEntity.null_2.get("test").isEmptyArray())
-                                    )
+                    )
                     .fetch();
 
-            assertEquals(Integer.valueOf(1),result.get(0));
+            assertEquals(Integer.valueOf(1), result.get(0));
         });
     }
 
