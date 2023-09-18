@@ -63,11 +63,16 @@ public class JsonExpression<T> extends SimpleExpression<T> {
         return get(Expressions.constant(index));
     }
 
-    public JsonExpression<JsonNode> get(String... key) {
-        String[] keys = Arrays.stream(Arrays.stream(key)
-                        .collect(Collectors.joining("."))
-                        .split("\\."))
-                .toArray(String[]::new);
+    /**
+     * Retrieves JSON elements based on their paths.
+     *
+     * @param paths An array of paths to the JSON elements to be retrieved.
+     *              Each path can be either a simple key or a key path separated by dots.
+     * @return A JsonExpression object representing the result of the retrieval operation.
+     * @throws IllegalArgumentException If the provided paths are null, empty, or if they contain invalid patterns.
+     */
+    public JsonExpression<JsonNode> get(String... paths) {
+        String[] keys = this.validatePaths(paths);
         return get(arrayConstant(keys));
     }
 
@@ -175,14 +180,17 @@ public class JsonExpression<T> extends SimpleExpression<T> {
         return deleteByIndex(Expressions.constant(index));
     }
 
-    public JsonExpression<JsonNode> deleteByPath(String... path) {
-        String[] paths = Arrays
-                            .stream(
-                                Arrays.stream(path)
-                                    .collect(Collectors.joining("."))
-                                    .split("\\."))
-                            .toArray(String[]::new);
-        return deleteByPath(arrayConstant(paths));
+    /**
+     * Deletes JSON elements based on their paths.
+     *
+     * @param paths An array of paths to the JSON elements to be deleted.
+     *              Each path can be either a simple key or a key path separated by dots.
+     * @return A JsonExpression object representing the result of the deletion operation.
+     * @throws IllegalArgumentException If the provided paths are null, empty, or if they contain invalid patterns.
+     */
+    public JsonExpression<JsonNode> deleteByPath(String... paths) {
+        String[] keys = this.validatePaths(paths);
+        return deleteByPath(arrayConstant(keys));
     }
 
     public JsonOperation<JsonNode> deleteByPath(Expression<?> path) {
@@ -192,7 +200,52 @@ public class JsonExpression<T> extends SimpleExpression<T> {
     public BooleanExpression isEmptyArray() {
         return Expressions.anyOf(
                 this.isNull(),
-                this.size().eq(0));
+                Expressions.allOf(
+                        this.isArray(),
+                        this.size().eq(0)
+                ));
+    }
+
+    public BooleanExpression isArray() {
+        return Expressions.allOf(
+                this.isNotNull(),
+                Expressions.stringOperation(JsonOps.JSON_TYPEOF, mixin).eq("array")
+        );
+    }
+
+    private String[] validatePaths(String... paths) {
+        // Check if paths are null or empty; throw IllegalArgumentException if they are.
+        if (paths == null || paths.length == 0) {
+            throw new IllegalArgumentException("Path cannot be null or empty.");
+        }
+        boolean containsDot = false;
+        String[] keys;
+
+        // Iterate through the list of paths to check for the presence of dots.
+        for (String path : paths) {
+            if (path.isEmpty()){
+                throw new IllegalArgumentException("The provided path is invalid.");
+            }
+            if (path.contains(".")) {
+                containsDot = true;
+                break;
+            }
+        }
+
+        // Handle based on context:
+        if (containsDot) {
+            // If there is a dot and more than one path, throw an IllegalArgumentException.
+            if (paths.length > 1) {
+                throw new IllegalArgumentException("The provided path is invalid.");
+            } else {
+                // If there is only one path with a dot, split it into keys.
+                keys = paths[0].split("\\.");
+            }
+        } else {
+            // If there are no dots in the paths, use them as keys.
+            keys = paths;
+        }
+        return keys;
     }
 
 }

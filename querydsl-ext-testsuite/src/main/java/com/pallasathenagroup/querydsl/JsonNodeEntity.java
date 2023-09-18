@@ -31,6 +31,10 @@ public class JsonNodeEntity {
     String jsonNode2;
 
     @Type(type = "jsonb")
+    @Column(columnDefinition = "jsonb")
+    String jsonNode3;
+
+    @Type(type = "jsonb")
     @Column(name = "embed_1", columnDefinition = "jsonb")
     Embed1 embed1;
 
