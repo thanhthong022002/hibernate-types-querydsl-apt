@@ -7,7 +7,7 @@
     <groupId>com.pallasathenagroup.querydsl</groupId>
     <artifactId>querydsl-ext</artifactId>
     <packaging>pom</packaging>
-    <version>2.0.2-SNAPSHOT</version>
+    <version>10.0.5</version>
     <modules>
         <module>querydsl-ext-apt</module>
         <module>querydsl-ext-api</module>
@@ -16,27 +16,71 @@
     </modules>
 
     <properties>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.source>14</maven.compiler.source>
+        <maven.compiler.target>14</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <querydsl.version>5.0.0</querydsl.version>
-        <hibernate.version>5.4.10.Final</hibernate.version>
+        <querydsl.version>10.0.2</querydsl.version>
+        <hibernate.version>5.4.32.Final</hibernate.version>
         <jackson.version>2.9.10.3</jackson.version>
     </properties>
 
     <distributionManagement>
-        <repository>
-            <id>pallasathenagroup</id>
-            <name>pallasathenagroup-release-local</name>
-            <url>https://pallasathenagroup.jfrog.io/pallasathenagroup/libs-release-local</url>
-        </repository>
         <snapshotRepository>
-            <id>pallasathenagroup</id>
-            <name>pallasathenagroup-snapshots-local</name>
-            <url>https://pallasathenagroup.jfrog.io/pallasathenagroup/libs-snapshot-local</url>
+            <id>maven-snapshots</id>
+            <url>https://nexus.internal.xomad.com/repository/maven-snapshots/</url>
         </snapshotRepository>
+        <repository>
+            <id>maven-releases</id>
+            <url>https://nexus.internal.xomad.com/repository/maven-releases/</url>
+        </repository>
     </distributionManagement>
+
+    <repositories>
+        <repository>
+            <id>maven-snapshots</id>
+            <url>https://nexus.internal.xomad.com/repository/maven-snapshots/</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+        </repository>
+        <repository>
+            <id>maven-releases</id>
+            <url>https://nexus.internal.xomad.com/repository/maven-releases/</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+        </repository>
+    </repositories>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>maven-snapshots</id>
+            <url>https://nexus.internal.xomad.com/repository/maven-snapshots/</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+        </pluginRepository>
+        <pluginRepository>
+            <id>maven-releases</id>
+            <url>https://nexus.internal.xomad.com/repository/maven-releases/</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+        </pluginRepository>
+    </pluginRepositories>
 
     <dependencyManagement>
         <dependencies>
@@ -55,7 +99,7 @@
             <dependency>
                 <groupId>com.vladmihalcea</groupId>
                 <artifactId>hibernate-types-52</artifactId>
-                <version>2.12.0</version>
+                <version>2.12.1</version>
             </dependency>
             <dependency>
                 <groupId>org.hibernate</groupId>

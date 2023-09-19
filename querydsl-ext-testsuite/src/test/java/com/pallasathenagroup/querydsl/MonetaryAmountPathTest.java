@@ -47,7 +47,7 @@ public class MonetaryAmountPathTest extends BaseCoreFunctionalTestCase {
     @Test
     public void testArrayPaths() {
         doInJPA(this::sessionFactory, entityManager -> {
-            Map<CurrencyUnit, BigDecimal> result = new JPAQuery<PeriodEntity>(entityManager, ExtendedHQLTemplates.DEFAULT)
+            Map<CurrencyUnit, BigDecimal> result = new JPAQuery<PeriodEntity>(entityManager)
                     .from(monetaryAmountEntity)
                     .groupBy(monetaryAmountEntity.monetaryAmount.currencyUnit)
                     .transform(GroupBy.groupBy(monetaryAmountEntity.monetaryAmount.currencyUnit).as(monetaryAmountEntity.monetaryAmount.amount.sum()));
@@ -61,7 +61,7 @@ public class MonetaryAmountPathTest extends BaseCoreFunctionalTestCase {
     public void testMoneyProjection() {
 
         doInJPA(this::sessionFactory, entityManager -> {
-            QueryResults<MonetaryAmount> result = new JPAQuery<PeriodEntity>(entityManager, ExtendedHQLTemplates.DEFAULT)
+            QueryResults<MonetaryAmount> result = new JPAQuery<PeriodEntity>(entityManager)
                     .from(monetaryAmountEntity)
                     .groupBy(monetaryAmountEntity.monetaryAmount.currencyUnit)
                     .select(MoneyProjections.money(monetaryAmountEntity.monetaryAmount.amount.sum(), monetaryAmountEntity.monetaryAmount.currencyUnit))
@@ -76,7 +76,7 @@ public class MonetaryAmountPathTest extends BaseCoreFunctionalTestCase {
     public void testMoneyComponentExpressions() {
 
         doInJPA(this::sessionFactory, entityManager -> {
-            MonetaryAmount result = new JPAQuery<PeriodEntity>(entityManager, ExtendedHQLTemplates.DEFAULT)
+            MonetaryAmount result = new JPAQuery<PeriodEntity>(entityManager)
                     .from(monetaryAmountEntity)
                     .where(monetaryAmountEntity.monetaryAmount.amount.gt(new BigDecimal("100")))
                     .where(monetaryAmountEntity.monetaryAmount.currencyUnit.eq(Monetary.getCurrency("EUR")))
@@ -93,7 +93,7 @@ public class MonetaryAmountPathTest extends BaseCoreFunctionalTestCase {
             CurrencyUnit eur = Monetary.getCurrency("EUR");
             MonetaryAmount monetaryAmount = Monetary.getDefaultAmountFactory().setCurrency(eur).setNumber(200).create();
 
-            MonetaryAmount result = new JPAQuery<PeriodEntity>(entityManager, ExtendedHQLTemplates.DEFAULT)
+            MonetaryAmount result = new JPAQuery<PeriodEntity>(entityManager)
                     .from(monetaryAmountEntity)
                     .where(monetaryAmountEntity.monetaryAmount.eq(monetaryAmount))
                     .select(monetaryAmountEntity.monetaryAmount)

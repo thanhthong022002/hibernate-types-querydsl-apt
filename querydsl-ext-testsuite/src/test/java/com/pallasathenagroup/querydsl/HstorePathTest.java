@@ -36,7 +36,7 @@ public class HstorePathTest extends BaseCoreFunctionalTestCase {
     @Test
     public void getFieldAsText() {
         doInJPA(this::sessionFactory, entityManager -> {
-            String result = new JPAQuery<HstoreEntity>(entityManager, ExtendedHQLTemplates.DEFAULT)
+            String result = new JPAQuery<HstoreEntity>(entityManager)
                     .from(hstoreEntity)
                     .select(
                             HibernateTypesExpressions.asHstore(hstoreEntity.hstore).get("a")

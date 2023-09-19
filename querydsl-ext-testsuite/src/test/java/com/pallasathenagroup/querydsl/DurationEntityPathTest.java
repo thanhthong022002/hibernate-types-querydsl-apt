@@ -1,6 +1,5 @@
 package com.pallasathenagroup.querydsl;
 
-import com.google.common.collect.Range;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import org.hibernate.testing.junit4.BaseCoreFunctionalTestCase;
@@ -9,12 +8,10 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.time.Duration;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
 import static com.pallasathenagroup.querydsl.QDurationEntity.durationEntity;
-import static com.pallasathenagroup.querydsl.QRangeEntity.rangeEntity;
 import static org.hibernate.testing.transaction.TransactionUtil.doInJPA;
 
 public class DurationEntityPathTest extends BaseCoreFunctionalTestCase {
@@ -38,7 +35,7 @@ public class DurationEntityPathTest extends BaseCoreFunctionalTestCase {
     public void durationTest() {
         doInJPA(this::sessionFactory, entityManager -> {
             LocalDateTime now = LocalDateTime.now();
-            List<DurationEntity> fetch = new JPAQuery<RangeEntity>(entityManager, ExtendedHQLTemplates.DEFAULT)
+            List<DurationEntity> fetch = new JPAQuery<RangeEntity>(entityManager)
                 .from(durationEntity).select(durationEntity)
                 .where(durationEntity.duration.ne(Duration.ofHours(2)))
                 .where(durationEntity.duration.multiply(6).divide(2.0).gt(Duration.ofHours(1)))

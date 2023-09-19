@@ -5,7 +5,7 @@
     <parent>
         <artifactId>querydsl-ext</artifactId>
         <groupId>com.pallasathenagroup.querydsl</groupId>
-        <version>2.0.2-SNAPSHOT</version>
+        <version>10.0.5</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -29,7 +29,7 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>27.1-jre</version>
+            <version>29.0-jre</version>
             <optional>true</optional>
         </dependency>
         <dependency>

@@ -5,3 +5,4 @@ com.pallasathenagroup.querydsl.PeriodSupport
 com.pallasathenagroup.querydsl.YearMonthSupport
 com.pallasathenagroup.querydsl.MonetaryAmountSupport
 com.pallasathenagroup.querydsl.JsonNodeSupport
+com.pallasathenagroup.querydsl.HibernateTypeSupport

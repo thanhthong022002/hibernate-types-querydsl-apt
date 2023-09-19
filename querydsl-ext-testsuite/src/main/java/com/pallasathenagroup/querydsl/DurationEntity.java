@@ -3,7 +3,6 @@ package com.pallasathenagroup.querydsl;
 import com.vladmihalcea.hibernate.type.interval.PostgreSQLIntervalType;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
-import org.hibernate.annotations.TypeDefs;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

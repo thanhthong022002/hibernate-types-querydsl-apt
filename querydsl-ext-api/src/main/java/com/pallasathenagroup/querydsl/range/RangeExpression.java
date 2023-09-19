@@ -7,10 +7,8 @@ import com.querydsl.core.types.ConstantImpl;
 import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.Visitor;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.core.types.dsl.CaseForEqBuilder;
 import com.querydsl.core.types.dsl.ComparableExpression;
 import com.querydsl.core.types.dsl.Expressions;
-import com.querydsl.core.types.dsl.SimpleExpression;
 import com.vladmihalcea.hibernate.type.range.guava.PostgreSQLGuavaRangeType;
 import org.hibernate.jpa.TypedParameterValue;
 

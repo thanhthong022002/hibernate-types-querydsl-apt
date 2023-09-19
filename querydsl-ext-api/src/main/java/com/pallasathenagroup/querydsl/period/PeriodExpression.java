@@ -6,7 +6,6 @@ import com.querydsl.core.types.Ops;
 import com.querydsl.core.types.Visitor;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberExpression;
-import com.vladmihalcea.hibernate.type.interval.PostgreSQLIntervalType;
 import com.vladmihalcea.hibernate.type.interval.PostgreSQLPeriodType;
 import org.hibernate.jpa.TypedParameterValue;
 

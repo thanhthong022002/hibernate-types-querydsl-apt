@@ -8,7 +8,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.Period;
 import java.util.List;
 
@@ -36,7 +35,7 @@ public class PeriodEntityPathTest extends BaseCoreFunctionalTestCase {
     public void periodTest() {
         doInJPA(this::sessionFactory, entityManager -> {
             LocalDate now = LocalDate.now();
-            List<PeriodEntity> fetch = new JPAQuery<PeriodEntity>(entityManager, ExtendedHQLTemplates.DEFAULT)
+            List<PeriodEntity> fetch = new JPAQuery<PeriodEntity>(entityManager)
                 .from(periodEntity).select(periodEntity)
                 .where(periodEntity.period.ne(Period.ofDays(2)))
                 .where(periodEntity.period.multiply(6).divide(2.0).isNotNull())
