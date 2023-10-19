@@ -5,7 +5,7 @@
     <parent>
         <artifactId>querydsl-ext</artifactId>
         <groupId>com.pallasathenagroup.querydsl</groupId>
-        <version>10.0.6</version>
+        <version>10.0.7</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
