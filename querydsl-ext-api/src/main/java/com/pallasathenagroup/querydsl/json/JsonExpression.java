@@ -15,11 +15,8 @@ import com.querydsl.core.types.dsl.SimpleExpression;
 import com.querydsl.core.types.dsl.StringExpression;
 import com.vladmihalcea.hibernate.type.array.StringArrayType;
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
-import org.hibernate.jpa.TypedParameterValue;
-
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
+import org.hibernate.jpa.TypedParameterValue;
 
 public class JsonExpression<T> extends SimpleExpression<T> {
 

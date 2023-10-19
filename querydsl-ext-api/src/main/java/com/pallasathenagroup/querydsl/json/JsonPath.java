@@ -3,7 +3,7 @@ package com.pallasathenagroup.querydsl.json;
 import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Path;
 import com.querydsl.core.types.PathMetadata;
-
+import com.querydsl.core.types.dsl.EntityPathBase;
 import java.lang.reflect.AnnotatedElement;
 
 public class JsonPath<T> extends JsonExpression<T> implements Path<T> {
@@ -13,7 +13,16 @@ public class JsonPath<T> extends JsonExpression<T> implements Path<T> {
     }
 
     public JsonPath(PathMetadata pathMetadata) {
-        this((Path) ExpressionUtils.path(Object.class, pathMetadata));
+        this(ExpressionUtils.path(getTypeFromMetadata(pathMetadata), pathMetadata));
+    }
+
+    @SuppressWarnings("unchecked")
+    private static Class getTypeFromMetadata(PathMetadata metadata) {
+        try {
+            return ((EntityPathBase) metadata.getParent()).getType().getDeclaredField(metadata.getName()).getType();
+        } catch (NoSuchFieldException e) {
+            return null;
+        }
     }
 
     @Override

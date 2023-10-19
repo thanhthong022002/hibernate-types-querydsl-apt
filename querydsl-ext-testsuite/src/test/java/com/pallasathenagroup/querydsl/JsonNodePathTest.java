@@ -15,6 +15,7 @@ import com.google.common.collect.Lists;
 import com.pallasathenagroup.querydsl.json.JsonExpressions;
 import com.pallasathenagroup.querydsl.json.JsonPath;
 import com.querydsl.core.Tuple;
+import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import java.util.HashMap;
@@ -93,6 +94,24 @@ public class JsonNodePathTest extends BaseTestContainersTest {
             entity.not_null = objectMapper.valueToTree(Map.of("test", 1));
 
             entityManager.persist(entity);
+        });
+    }
+
+    @Test
+    public void testProjectionJsonField() {
+        doInJPA(this::sessionFactory, entityManager -> {
+            var result = new JPAQuery<JsonNodeEntity>(entityManager)
+                    .from(jsonNodeEntity)
+                    .select(
+                            Projections.fields(
+                                    JsonNodeEntity.class,
+                                    jsonNodeEntity.embed1
+                            )
+                    )
+                    .fetchOne();
+
+            assertNotNull("Fail to query by projection", result);
+            assertEquals("embed1_attr1", result.embed1.embed1_attr1);
         });
     }
 
