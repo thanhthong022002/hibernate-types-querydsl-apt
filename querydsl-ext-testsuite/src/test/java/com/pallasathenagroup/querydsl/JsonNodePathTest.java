@@ -55,7 +55,7 @@ public class JsonNodePathTest extends BaseTestContainersTest {
             entity.intNumber = 1;
             entity.uuid = UUID.randomUUID();
             entity.jsonNode2= "[\"a\", {\"b\":1}]";
-            entity.jsonNode3= "{}";
+            entity.jsonNode3= "[]";
 
             JsonNodeEntity.Embed1 e1 = new JsonNodeEntity.Embed1();
             e1.embed1_attr1 = "embed1_attr1";
@@ -462,7 +462,7 @@ public class JsonNodePathTest extends BaseTestContainersTest {
                     .select(Expressions.ONE)
                     .where(
                             jsonNodeEntity.embed2List.isArray()
-                                    .and(jsonNodeEntity.jsonNode3.isArray().not())
+                                    .and(jsonNodeEntity.jsonNode3.isArray())
                                     .and(jsonNodeEntity.listInt3.isArray())
                                     .and(jsonNodeEntity.listInt2.isArray())
                                     .and(jsonNodeEntity.null_1.get("test").isArray().not())

@@ -52,7 +52,7 @@
         <dependency>
             <groupId>org.jadira.usertype</groupId>
             <artifactId>usertype.spi</artifactId>
-            <version>6.0.1.GA</version>
+            <version>7.0.0.CR1</version>
             <scope>test</scope>
             <exclusions>
                 <exclusion>
@@ -64,7 +64,7 @@
         <dependency>
             <groupId>org.jadira.usertype</groupId>
             <artifactId>usertype.core</artifactId>
-            <version>6.0.1.GA</version>
+            <version>7.0.0.CR1</version>
             <scope>test</scope>
             <exclusions>
                 <exclusion>
