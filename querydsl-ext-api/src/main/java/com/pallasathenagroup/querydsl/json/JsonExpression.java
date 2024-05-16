@@ -194,6 +194,19 @@ public class JsonExpression<T> extends SimpleExpression<T> {
         return new JsonOperation<>(Expressions.operation(JsonNode.class, JsonOps.JSON_DELETE_PATH, mixin, path));
     }
 
+    public JsonOperation<JsonNode> set(String path, Object value) {
+        String[] keys = this.validatePaths(path);
+        return set(arrayConstant(keys), jsonbConstant(value));
+    }
+
+    public JsonOperation<JsonNode> set(Expression<?> path, Expression<?> value) {
+        return new JsonOperation<>(Expressions.operation(JsonNode.class, JsonOps.SET, mixin, path, value));
+    }
+
+    public JsonOperation<JsonNode> coalesce(Expression<?> expr) {
+        return new JsonOperation<>(Expressions.operation(JsonNode.class, Ops.COALESCE, Expressions.list(mixin, expr)));
+    }
+
     public BooleanExpression isEmptyArray() {
         return Expressions.anyOf(
                 this.isNull(),

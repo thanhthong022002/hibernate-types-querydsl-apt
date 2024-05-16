@@ -39,8 +39,9 @@ public class JsonFunctionInitializer implements MetadataBuilderInitializer {
         metadataBuilder.applySqlFunction("jsonb_array_elements_text", new StandardSQLFunction("jsonb_array_elements_text", StringType.INSTANCE));
         metadataBuilder.applySqlFunction("json_build_object", new StandardSQLFunction("json_build_object", OBJECT_NODE_TYPE));
         metadataBuilder.applySqlFunction("jsonb_build_object", new StandardSQLFunction("jsonb_build_object", OBJECT_NODE_TYPE));
+        metadataBuilder.applySqlFunction("json_build_array", new StandardSQLFunction("json_build_array", ARRAY_NODE_TYPE));
         metadataBuilder.applySqlFunction("jsonb_build_array", new StandardSQLFunction("jsonb_build_array", ARRAY_NODE_TYPE));
-        metadataBuilder.applySqlFunction("jsonb_build_array", new StandardSQLFunction("jsonb_build_array", ARRAY_NODE_TYPE));
+        metadataBuilder.applySqlFunction("jsonb_set", new StandardSQLFunction("jsonb_set", OBJECT_NODE_TYPE));
     }
 
 }

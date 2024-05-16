@@ -22,7 +22,8 @@ public enum JsonOps implements Operator {
     ROW_TO_JSON(Object.class),
     JSON_BUILD_ARRAY(Object.class),
     JSON_BUILD_OBJECT(Object.class),
-    LENGTH(Object.class);
+    LENGTH(Object.class),
+    SET(Object.class);
 
     private final Class<?> type;
 

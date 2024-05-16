@@ -3,16 +3,16 @@ package com.pallasathenagroup.querydsl;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.querydsl.core.annotations.NameClass;
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
-import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
-
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import java.util.List;
-import java.util.UUID;
+import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
 
 @Entity
 @TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)
@@ -75,6 +75,10 @@ public class JsonNodeEntity {
     @Type(type = "jsonb")
     @Column(name = "not_null", columnDefinition = "jsonb")
     JsonNode not_null;
+
+    @Type(type = "jsonb")
+    @Column(name = "map", columnDefinition = "jsonb")
+    Map<String, Object> map;
 
     @NameClass
     public static final class Embed1 {

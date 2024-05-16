@@ -80,6 +80,7 @@ public class ExtendedHQLTemplates extends HQLTemplates {
         templates.add(JsonOps.JSON_DELETE_KEY, "JSON_DELETE_KEY({0}, {1})");
         templates.add(JsonOps.JSON_DELETE_INDEX, "JSON_DELETE_INDEX({0}, {1})");
         templates.add(JsonOps.JSON_DELETE_PATH, "JSON_DELETE_PATH({0}, {1})");
+        templates.add(JsonOps.SET, "jsonb_set({0}, {1}, {2})");
 
         templates.add(HstoreOps.CONTAINS_KEY, "HSTORE_CONTAINS_KEY({0}, {1}) = TRUE");
         templates.add(HstoreOps.MAP_SIZE, "HSTORE_MAP_SIZE({0})");

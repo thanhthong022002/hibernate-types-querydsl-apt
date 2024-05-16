@@ -1,13 +1,5 @@
 package com.pallasathenagroup.querydsl;
 
-import org.hibernate.cfg.Environment;
-import org.hibernate.jpa.boot.internal.EntityManagerFactoryBuilderImpl;
-import org.hibernate.jpa.boot.internal.PersistenceUnitInfoDescriptor;
-import org.hibernate.testing.util.jpa.PersistenceUnitInfoAdapter;
-import org.testcontainers.containers.PostgreSQLContainer;
-
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.spi.PersistenceUnitInfo;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -15,6 +7,13 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.spi.PersistenceUnitInfo;
+import org.hibernate.cfg.Environment;
+import org.hibernate.jpa.boot.internal.EntityManagerFactoryBuilderImpl;
+import org.hibernate.jpa.boot.internal.PersistenceUnitInfoDescriptor;
+import org.hibernate.testing.util.jpa.PersistenceUnitInfoAdapter;
+import org.testcontainers.containers.PostgreSQLContainer;
 
 public abstract class BaseTestContainersTest {
 
@@ -51,6 +50,8 @@ public abstract class BaseTestContainersTest {
                 properties.setProperty(Environment.USER, POSTGRE_SQL_CONTAINER.getUsername());
                 properties.setProperty("hibernate.metadata_builder_contributor",
                         "com.pallasathenagroup.querydsl.GlobalMetadataBuilderContributor");
+
+                System.out.println("Database Url: " + POSTGRE_SQL_CONTAINER.getJdbcUrl());
 
 
 //                PGSimpleDataSource dataSource = new PGSimpleDataSource();

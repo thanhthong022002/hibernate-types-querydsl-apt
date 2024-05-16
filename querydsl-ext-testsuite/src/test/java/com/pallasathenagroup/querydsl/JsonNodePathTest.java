@@ -93,6 +93,9 @@ public class JsonNodePathTest extends BaseTestContainersTest {
             // not null value
             entity.not_null = objectMapper.valueToTree(Map.of("test", 1));
 
+            // map
+            entity.map = Map.of();
+
             entityManager.persist(entity);
         });
     }
@@ -352,6 +355,70 @@ public class JsonNodePathTest extends BaseTestContainersTest {
             } catch (JsonProcessingException e) {
                 throw new RuntimeException(e);
             }
+        });
+    }
+
+    @Test
+    public void testSet() {
+        doInJPA(this::sessionFactory, entityManager -> {
+            JsonNode jsonAfterSet = new JPAQuery<JsonNode>(entityManager)
+                    .from(jsonNodeEntity)
+                    .select(jsonNodeEntity.map.get("a")
+                            .coalesce(jsonNodeEntity.map.jsonbConstant(Map.of()))
+                            .set("b", 100)
+                    )
+                    .fetchOne();
+            assertEquals(100, jsonAfterSet.get("b").intValue());
+        });
+    }
+
+    @Test
+    public void testUpdateBySet() {
+        doInJPA(this::sessionFactory, entityManager -> {
+            long result = new ExtendJpaUpdateClause(entityManager, jsonNodeEntity)
+                    .set(jsonNodeEntity.map, "a",
+                            jsonNodeEntity.map.get("a")
+                                    .coalesce(jsonNodeEntity.map.jsonbConstant(Map.of()))
+                                    .set("b", 100)
+                    )
+                    .execute();
+
+            assertEquals(1, result);
+
+            var jsonAfterSet = new JPAQuery<JsonNodeEntity>(entityManager)
+                    .from(jsonNodeEntity)
+                    .select(jsonNodeEntity.map.get("a.b"))
+                    .fetchOne();
+            assertEquals(100, jsonAfterSet.intValue());
+        });
+    }
+
+    @Test
+    public void testUpdateBySetNotLost() {
+        doInJPA(this::sessionFactory, entityManager -> {
+            var result = new ExtendJpaUpdateClause(entityManager, jsonNodeEntity)
+                    .set(jsonNodeEntity.map, Map.of("a", Map.of("b", 1, "c", 2)))
+                    .execute();
+            assertEquals(1, result);
+        });
+
+        doInJPA(this::sessionFactory, entityManager -> {
+            long result = new ExtendJpaUpdateClause(entityManager, jsonNodeEntity)
+                    .set(jsonNodeEntity.map, "a",
+                            jsonNodeEntity.map.get("a")
+                                    .coalesce(jsonNodeEntity.map.jsonbConstant(Map.of()))
+                                    .set("b", 100)
+                    )
+                    .execute();
+
+            assertEquals(1, result);
+
+            var jsonAfterSet = new JPAQuery<JsonNodeEntity>(entityManager)
+                    .from(jsonNodeEntity)
+                    .select(jsonNodeEntity.map.get("a"))
+                    .fetchOne();
+            assertEquals(100, jsonAfterSet.get("b").intValue());
+            assertEquals(2, jsonAfterSet.get("c").intValue());
         });
     }
 
