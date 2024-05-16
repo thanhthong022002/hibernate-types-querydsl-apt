@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.BooleanNode;
 import com.fasterxml.jackson.databind.node.IntNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import com.google.common.collect.ImmutableList;
@@ -364,7 +365,7 @@ public class JsonNodePathTest extends BaseTestContainersTest {
             JsonNode jsonAfterSet = new JPAQuery<JsonNode>(entityManager)
                     .from(jsonNodeEntity)
                     .select(jsonNodeEntity.map.get("a")
-                            .coalesce(jsonNodeEntity.map.jsonbConstant(Map.of()))
+                            .coalesce(JsonExpressions.jsonbConstant(Map.of()))
                             .set("b", 100)
                     )
                     .fetchOne();
@@ -378,7 +379,7 @@ public class JsonNodePathTest extends BaseTestContainersTest {
             long result = new ExtendJpaUpdateClause(entityManager, jsonNodeEntity)
                     .set(jsonNodeEntity.map, "a",
                             jsonNodeEntity.map.get("a")
-                                    .coalesce(jsonNodeEntity.map.jsonbConstant(Map.of()))
+                                    .coalesce(JsonExpressions.jsonbConstant(Map.of()))
                                     .set("b", 100)
                     )
                     .execute();
@@ -406,7 +407,7 @@ public class JsonNodePathTest extends BaseTestContainersTest {
             long result = new ExtendJpaUpdateClause(entityManager, jsonNodeEntity)
                     .set(jsonNodeEntity.map, "a",
                             jsonNodeEntity.map.get("a")
-                                    .coalesce(jsonNodeEntity.map.jsonbConstant(Map.of()))
+                                    .coalesce(JsonExpressions.jsonbConstant(Map.of()))
                                     .set("b", 100)
                     )
                     .execute();
@@ -419,6 +420,38 @@ public class JsonNodePathTest extends BaseTestContainersTest {
                     .fetchOne();
             assertEquals(100, jsonAfterSet.get("b").intValue());
             assertEquals(2, jsonAfterSet.get("c").intValue());
+        });
+    }
+
+    @Test
+    public void testUpdateBySetNotLost2() {
+        doInJPA(this::sessionFactory, entityManager -> {
+            Map<String, Object> val = new HashMap<>();
+            val.put("a", null);
+
+            var result = new ExtendJpaUpdateClause(entityManager, jsonNodeEntity)
+                    .set(jsonNodeEntity.map, val)
+                    .execute();
+            assertEquals(1, result);
+        });
+
+        doInJPA(this::sessionFactory, entityManager -> {
+            long result = new ExtendJpaUpdateClause(entityManager, jsonNodeEntity)
+                    .set(jsonNodeEntity.map, "a",
+                            Expressions.cases()
+                                    .when(jsonNodeEntity.map.get("a").isNotNull())
+                                    .then(jsonNodeEntity.map.get("a").set("b", 100))
+                                    .otherwise(JsonNodeFactory.instance.objectNode().put("b", 100))
+                    )
+                    .execute();
+
+            assertEquals(1, result);
+
+            var jsonAfterSet = new JPAQuery<JsonNodeEntity>(entityManager)
+                    .from(jsonNodeEntity)
+                    .select(jsonNodeEntity.map.get("a"))
+                    .fetchOne();
+            assertEquals(100, jsonAfterSet.get("b").intValue());
         });
     }
 

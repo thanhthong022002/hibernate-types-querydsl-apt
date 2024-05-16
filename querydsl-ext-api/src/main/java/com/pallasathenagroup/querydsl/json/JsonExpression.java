@@ -13,10 +13,7 @@ import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.core.types.dsl.SimpleExpression;
 import com.querydsl.core.types.dsl.StringExpression;
-import com.vladmihalcea.hibernate.type.array.StringArrayType;
-import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 import java.util.List;
-import org.hibernate.jpa.TypedParameterValue;
 
 public class JsonExpression<T> extends SimpleExpression<T> {
 
@@ -44,7 +41,7 @@ public class JsonExpression<T> extends SimpleExpression<T> {
     }
 
     public BooleanExpression contains(Object object) {
-        return contains(jsonbConstant(object));
+        return contains(JsonExpressions.jsonbConstant(object));
     }
 
     public JsonOperation<JsonNode> get(Expression<?> key) {
@@ -70,7 +67,7 @@ public class JsonExpression<T> extends SimpleExpression<T> {
      */
     public JsonExpression<JsonNode> get(String... paths) {
         String[] keys = this.validatePaths(paths);
-        return get(arrayConstant(keys));
+        return get(JsonExpressions.arrayConstant(keys));
     }
 
     public StringExpression asText() {
@@ -100,11 +97,11 @@ public class JsonExpression<T> extends SimpleExpression<T> {
     public <A> JsonOperation<ArrayNode> concat(A... other) {
         // convert to list, since array will cause
         // IllegalArgumentException: Encountered array-valued parameter binding, but was expecting
-        return concat(jsonbConstant(List.of(other)));
+        return concat(JsonExpressions.jsonbConstant(List.of(other)));
     }
 
     public <A> JsonOperation<ArrayNode> concat(List<A> other) {
-        return concat(jsonbConstant(other));
+        return concat(JsonExpressions.jsonbConstant(other));
     }
 
     public final NumberExpression<Integer> size() {
@@ -141,26 +138,6 @@ public class JsonExpression<T> extends SimpleExpression<T> {
         return isnotnull;
     }
 
-    public JsonExpression<?> jsonbConstant(Object object) {
-        return new JsonExpression<>(
-                Expressions.constant(
-                    new TypedParameterValue(
-                            JsonBinaryType.INSTANCE,
-                            object
-                    )
-                )
-        );
-    }
-
-    public Expression<TypedParameterValue> arrayConstant(String... keys) {
-        return Expressions.constant(
-                new TypedParameterValue(
-                        StringArrayType.INSTANCE,
-                        keys
-                )
-        );
-    }
-
     public JsonOperation<JsonNode> deleteByKey(Expression<String> key) {
         return new JsonOperation<>(Expressions.operation(JsonNode.class, JsonOps.JSON_DELETE_KEY, mixin, key));
     }
@@ -187,7 +164,7 @@ public class JsonExpression<T> extends SimpleExpression<T> {
      */
     public JsonExpression<JsonNode> deleteByPath(String... paths) {
         String[] keys = this.validatePaths(paths);
-        return deleteByPath(arrayConstant(keys));
+        return deleteByPath(JsonExpressions.arrayConstant(keys));
     }
 
     public JsonOperation<JsonNode> deleteByPath(Expression<?> path) {
@@ -196,7 +173,7 @@ public class JsonExpression<T> extends SimpleExpression<T> {
 
     public JsonOperation<JsonNode> set(String path, Object value) {
         String[] keys = this.validatePaths(path);
-        return set(arrayConstant(keys), jsonbConstant(value));
+        return set(JsonExpressions.arrayConstant(keys), JsonExpressions.jsonbConstant(value));
     }
 
     public JsonOperation<JsonNode> set(Expression<?> path, Expression<?> value) {

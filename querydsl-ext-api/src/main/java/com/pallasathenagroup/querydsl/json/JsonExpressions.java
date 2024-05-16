@@ -13,9 +13,11 @@ import com.querydsl.core.types.SubQueryExpression;
 import com.querydsl.core.types.TemplateExpression;
 import com.querydsl.core.types.Visitor;
 import com.querydsl.core.types.dsl.Expressions;
-import org.jetbrains.annotations.Nullable;
-
+import com.vladmihalcea.hibernate.type.array.StringArrayType;
+import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 import java.util.Map;
+import org.hibernate.jpa.TypedParameterValue;
+import org.jetbrains.annotations.Nullable;
 
 public class JsonExpressions {
 
@@ -57,6 +59,26 @@ public class JsonExpressions {
 
     public static JsonExpression<ArrayNode> buildJsonArray(Expression<?> expressions) {
         return new JsonOperation<>(Expressions.operation(ArrayNode.class, JsonOps.JSON_BUILD_ARRAY, Expressions.list(expressions)));
+    }
+
+    public static JsonExpression<?> jsonbConstant(Object object) {
+        return new JsonExpression<>(
+                Expressions.constant(
+                        new TypedParameterValue(
+                                JsonBinaryType.INSTANCE,
+                                object
+                        )
+                )
+        );
+    }
+
+    public static Expression<TypedParameterValue> arrayConstant(String... keys) {
+        return Expressions.constant(
+                new TypedParameterValue(
+                        StringArrayType.INSTANCE,
+                        keys
+                )
+        );
     }
 
     private static class AliasLiteralVisitor implements Visitor<Expression<?>, Void> {
