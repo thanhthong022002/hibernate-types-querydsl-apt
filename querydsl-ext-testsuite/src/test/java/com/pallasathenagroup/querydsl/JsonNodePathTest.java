@@ -395,6 +395,32 @@ public class JsonNodePathTest extends BaseTestContainersTest {
     }
 
     @Test
+    public void testUpdateByMultiSet() {
+        doInJPA(this::sessionFactory, entityManager -> {
+            long result = new ExtendJpaUpdateClause(entityManager, jsonNodeEntity)
+                    .set(jsonNodeEntity.map, "a",
+                            jsonNodeEntity.map.get("a")
+                                    .coalesce(JsonExpressions.jsonbConstant(Map.of()))
+                                    .set("b", 100)
+                                    .set("c", 200)
+                    )
+                    .execute();
+
+            assertEquals(1, result);
+
+            var jsonAfterSet = new JPAQuery<JsonNodeEntity>(entityManager)
+                    .from(jsonNodeEntity)
+                    .select(
+                        jsonNodeEntity.map.get("a.b"),
+                        jsonNodeEntity.map.get("a.c")
+                    )
+                    .fetchOne();
+            assertEquals(100, jsonAfterSet.get(0, JsonNode.class).intValue());
+            assertEquals(200, jsonAfterSet.get(1, JsonNode.class).intValue());
+        });
+    }
+
+    @Test
     public void testUpdateBySetNotLost() {
         doInJPA(this::sessionFactory, entityManager -> {
             var result = new ExtendJpaUpdateClause(entityManager, jsonNodeEntity)
