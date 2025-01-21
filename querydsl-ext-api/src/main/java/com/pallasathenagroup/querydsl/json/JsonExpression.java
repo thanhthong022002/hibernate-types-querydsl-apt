@@ -13,6 +13,7 @@ import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.core.types.dsl.SimpleExpression;
 import com.querydsl.core.types.dsl.StringExpression;
+import com.vladmihalcea.hibernate.type.util.Configuration;
 import java.util.List;
 
 public class JsonExpression<T> extends SimpleExpression<T> {
@@ -173,7 +174,8 @@ public class JsonExpression<T> extends SimpleExpression<T> {
 
     public JsonOperation<JsonNode> set(String path, Object value) {
         String[] keys = this.validatePaths(path);
-        return set(JsonExpressions.arrayConstant(keys), JsonExpressions.jsonbConstant(value));
+        var afValue = Configuration.INSTANCE.getObjectMapperWrapper().getObjectMapper().valueToTree(value);
+        return set(JsonExpressions.arrayConstant(keys), JsonExpressions.jsonbConstant(afValue));
     }
 
     public JsonOperation<JsonNode> set(Expression<?> path, Expression<?> value) {

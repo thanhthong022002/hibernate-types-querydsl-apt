@@ -380,7 +380,9 @@ public class JsonNodePathTest extends BaseTestContainersTest {
                     .set(jsonNodeEntity.map, "a",
                             jsonNodeEntity.map.get("a")
                                     .coalesce(JsonExpressions.jsonbConstant(Map.of()))
-                                    .set("b", 100)
+                                    .set("a", 1)
+                                    .set("b", "name")
+                                    .set("c", Map.of("name", "unknown", "age", 20))
                     )
                     .execute();
 
@@ -388,9 +390,59 @@ public class JsonNodePathTest extends BaseTestContainersTest {
 
             var jsonAfterSet = new JPAQuery<JsonNodeEntity>(entityManager)
                     .from(jsonNodeEntity)
-                    .select(jsonNodeEntity.map.get("a.b"))
+                    .select(
+                            jsonNodeEntity.map.get("a.a"),
+                            jsonNodeEntity.map.get("a.b"),
+                            jsonNodeEntity.map.get("a.c")
+                    )
                     .fetchOne();
-            assertEquals(100, jsonAfterSet.intValue());
+            assertEquals(1, jsonAfterSet.get(0, JsonNode.class).intValue());
+            assertEquals("name", jsonAfterSet.get(1, JsonNode.class).textValue());
+            try {
+                assertEquals(
+                        Map.of("name", "unknown", "age", 20),
+                        objectMapper.treeToValue(jsonAfterSet.get(2, JsonNode.class), Map.class)
+                );
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException(e);
+            }
+        });
+    }
+
+    @Test
+    public void testUpdateBySet2() {
+        doInJPA(this::sessionFactory, entityManager -> {
+            long result = 0;
+            result = new ExtendJpaUpdateClause(entityManager, jsonNodeEntity)
+                    .set(jsonNodeEntity.map,
+                            jsonNodeEntity.map
+                                    .coalesce(JsonExpressions.jsonbConstant(Map.of()))
+                                    .set("a", 1)
+                                    .set("b", "name")
+                                    .set("c", Map.of("name", "unknown", "age", 20))
+                    )
+                    .execute();
+
+            assertEquals(1, result);
+
+            var jsonAfterSet = new JPAQuery<JsonNodeEntity>(entityManager)
+                    .from(jsonNodeEntity)
+                    .select(
+                        jsonNodeEntity.map.get("a"),
+                        jsonNodeEntity.map.get("b"),
+                        jsonNodeEntity.map.get("c")
+                    )
+                    .fetchOne();
+            assertEquals(1, jsonAfterSet.get(0, JsonNode.class).intValue());
+            assertEquals("name", jsonAfterSet.get(1, JsonNode.class).textValue());
+            try {
+                assertEquals(
+                        Map.of("name", "unknown", "age", 20),
+                        objectMapper.treeToValue(jsonAfterSet.get(2, JsonNode.class), Map.class)
+                );
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException(e);
+            }
         });
     }
 
