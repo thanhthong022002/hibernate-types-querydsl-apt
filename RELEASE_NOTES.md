@@ -1,3 +1,8 @@
+10.0.10
+=======
+
+- Fix serialization when JsonExpression set path with any value
+
 10.0.9
 ======
 
