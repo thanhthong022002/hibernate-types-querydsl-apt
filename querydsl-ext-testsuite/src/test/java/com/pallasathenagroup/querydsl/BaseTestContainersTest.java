@@ -9,10 +9,14 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.spi.PersistenceUnitInfo;
+import javax.sql.DataSource;
+import net.ttddyy.dsproxy.listener.logging.SLF4JLogLevel;
+import net.ttddyy.dsproxy.support.ProxyDataSourceBuilder;
 import org.hibernate.cfg.Environment;
 import org.hibernate.jpa.boot.internal.EntityManagerFactoryBuilderImpl;
 import org.hibernate.jpa.boot.internal.PersistenceUnitInfoDescriptor;
 import org.hibernate.testing.util.jpa.PersistenceUnitInfoAdapter;
+import org.postgresql.ds.PGSimpleDataSource;
 import org.testcontainers.containers.PostgreSQLContainer;
 
 public abstract class BaseTestContainersTest {
@@ -21,13 +25,16 @@ public abstract class BaseTestContainersTest {
     static EntityManagerFactory _emf;
 
     static {
-        POSTGRE_SQL_CONTAINER = new PostgreSQLContainer("postgres:12.7");
+
+        POSTGRE_SQL_CONTAINER = new PostgreSQLContainer("postgres:17");
+        POSTGRE_SQL_CONTAINER.setCommand("postgres",
+                "-c", "fsync=off",
+                "-c", "log_statement=all"
+        );
         POSTGRE_SQL_CONTAINER
                 .withReuse(true)
                 .withLabel("reuse.UUID", "querydsl-ext-api")
                 .start();
-
-
 
 //        properties.put("javax.persistence.schema-generation.database.action","create");
     }
@@ -53,20 +60,27 @@ public abstract class BaseTestContainersTest {
 
                 System.out.println("Database Url: " + POSTGRE_SQL_CONTAINER.getJdbcUrl());
 
+                // Configure DataSource
+                PGSimpleDataSource originalDataSource = new PGSimpleDataSource();
+                originalDataSource.setURL(POSTGRE_SQL_CONTAINER.getJdbcUrl());
+                originalDataSource.setUser(POSTGRE_SQL_CONTAINER.getUsername());
+                originalDataSource.setPassword(POSTGRE_SQL_CONTAINER.getPassword());
 
-//                PGSimpleDataSource dataSource = new PGSimpleDataSource();
-//                dataSource.setURL(POSTGRE_SQL_CONTAINER.getJdbcUrl());
-//                dataSource.setUser(POSTGRE_SQL_CONTAINER.getUsername());
-//                dataSource.setPassword(POSTGRE_SQL_CONTAINER.getPassword());
+                // Wrap DataSource with ProxyDataSource to enable logging
+                DataSource dataSource = ProxyDataSourceBuilder.create(originalDataSource)
+                        .name("ProxyDS")
+                        .logQueryBySlf4j(SLF4JLogLevel.INFO)
+                        .build();
 
                 Class<?>[] classes = this.getAnnotatedClasses();
 
                 PersistenceUnitInfo persistenceUnitInfo = new MyPersistenceUnitInfo(classes, properties);
 
                 Map<String, Object> configuration = new HashMap<>();
+                configuration.put("javax.persistence.nonJtaDataSource", dataSource);
                 _emf = new EntityManagerFactoryBuilderImpl(
                         new PersistenceUnitInfoDescriptor(persistenceUnitInfo), configuration)
-//                        .withDataSource(dataSource)
+                        .withDataSource(dataSource)
                         .build();
             }
 

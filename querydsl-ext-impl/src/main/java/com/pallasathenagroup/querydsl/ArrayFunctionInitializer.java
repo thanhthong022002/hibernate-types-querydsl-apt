@@ -11,7 +11,11 @@ import com.vladmihalcea.hibernate.type.array.UUIDArrayType;
 import com.vladmihalcea.hibernate.type.array.internal.AbstractArrayType;
 import com.vladmihalcea.hibernate.type.array.internal.AbstractArrayTypeDescriptor;
 import com.vladmihalcea.hibernate.type.basic.PostgreSQLEnumType;
-import com.vladmihalcea.hibernate.type.util.ReflectionUtils;
+import com.vladmihalcea.hibernate.util.ReflectionUtils;
+import java.lang.reflect.Array;
+import java.sql.Timestamp;
+import java.util.Date;
+import java.util.UUID;
 import org.hibernate.QueryException;
 import org.hibernate.TypeHelper;
 import org.hibernate.boot.MetadataBuilder;
@@ -27,11 +31,6 @@ import org.hibernate.type.StringType;
 import org.hibernate.type.Type;
 import org.hibernate.type.descriptor.java.JavaTypeDescriptor;
 import org.hibernate.usertype.UserType;
-
-import java.lang.reflect.Array;
-import java.sql.Timestamp;
-import java.util.Date;
-import java.util.UUID;
 
 public class ArrayFunctionInitializer implements MetadataBuilderInitializer {
 
