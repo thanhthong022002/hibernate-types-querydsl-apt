@@ -2,7 +2,7 @@ package com.pallasathenagroup.querydsl;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.querydsl.core.annotations.NameClass;
-import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
+import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 

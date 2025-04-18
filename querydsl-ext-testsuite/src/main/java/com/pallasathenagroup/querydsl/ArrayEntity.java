@@ -1,15 +1,15 @@
 package com.pallasathenagroup.querydsl;
 
-import com.vladmihalcea.hibernate.type.array.DateArrayType;
-import com.vladmihalcea.hibernate.type.array.DoubleArrayType;
-import com.vladmihalcea.hibernate.type.array.EnumArrayType;
-import com.vladmihalcea.hibernate.type.array.IntArrayType;
-import com.vladmihalcea.hibernate.type.array.ListArrayType;
-import com.vladmihalcea.hibernate.type.array.LongArrayType;
-import com.vladmihalcea.hibernate.type.array.StringArrayType;
-import com.vladmihalcea.hibernate.type.array.TimestampArrayType;
-import com.vladmihalcea.hibernate.type.array.UUIDArrayType;
-import com.vladmihalcea.hibernate.type.basic.PostgreSQLEnumType;
+import io.hypersistence.utils.hibernate.type.array.DateArrayType;
+import io.hypersistence.utils.hibernate.type.array.DoubleArrayType;
+import io.hypersistence.utils.hibernate.type.array.EnumArrayType;
+import io.hypersistence.utils.hibernate.type.array.IntArrayType;
+import io.hypersistence.utils.hibernate.type.array.ListArrayType;
+import io.hypersistence.utils.hibernate.type.array.LongArrayType;
+import io.hypersistence.utils.hibernate.type.array.StringArrayType;
+import io.hypersistence.utils.hibernate.type.array.TimestampArrayType;
+import io.hypersistence.utils.hibernate.type.array.UUIDArrayType;
+import io.hypersistence.utils.hibernate.type.basic.PostgreSQLEnumType;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;

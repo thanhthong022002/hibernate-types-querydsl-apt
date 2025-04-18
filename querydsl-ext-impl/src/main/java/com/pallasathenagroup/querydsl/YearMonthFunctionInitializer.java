@@ -1,8 +1,8 @@
 package com.pallasathenagroup.querydsl;
 
-import com.vladmihalcea.hibernate.type.basic.Iso8601MonthType;
-import com.vladmihalcea.hibernate.type.basic.YearMonthTimestampType;
-import com.vladmihalcea.hibernate.type.basic.YearType;
+import io.hypersistence.utils.hibernate.type.basic.Iso8601MonthType;
+import io.hypersistence.utils.hibernate.type.basic.YearMonthTimestampType;
+import io.hypersistence.utils.hibernate.type.basic.YearType;
 import org.hibernate.boot.MetadataBuilder;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.spi.MetadataBuilderInitializer;

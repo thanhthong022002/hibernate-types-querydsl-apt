@@ -22,13 +22,12 @@ import com.querydsl.core.types.dsl.DateExpression;
 import com.querydsl.core.types.dsl.DateTimeExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberExpression;
-import com.vladmihalcea.hibernate.type.basic.Iso8601MonthType;
-import com.vladmihalcea.hibernate.type.basic.YearMonthTimestampType;
-import com.vladmihalcea.hibernate.type.basic.YearType;
-import com.vladmihalcea.hibernate.type.interval.PostgreSQLIntervalType;
-import com.vladmihalcea.hibernate.type.interval.PostgreSQLPeriodType;
-import com.vladmihalcea.hibernate.type.range.guava.PostgreSQLGuavaRangeType;
-import org.hibernate.jpa.TypedParameterValue;
+import io.hypersistence.utils.hibernate.type.basic.Iso8601MonthType;
+import io.hypersistence.utils.hibernate.type.basic.YearMonthTimestampType;
+import io.hypersistence.utils.hibernate.type.basic.YearType;
+import io.hypersistence.utils.hibernate.type.interval.PostgreSQLIntervalType;
+import io.hypersistence.utils.hibernate.type.interval.PostgreSQLPeriodType;
+import io.hypersistence.utils.hibernate.type.range.guava.PostgreSQLGuavaRangeType;
 
 import java.lang.reflect.Array;
 import java.time.Duration;
@@ -38,6 +37,7 @@ import java.time.Period;
 import java.time.Year;
 import java.time.YearMonth;
 import java.util.Map;
+import org.hibernate.query.TypedParameterValue;
 
 import static com.pallasathenagroup.querydsl.yearmonth.YearMonthOps.CAST_YEARMONTH;
 

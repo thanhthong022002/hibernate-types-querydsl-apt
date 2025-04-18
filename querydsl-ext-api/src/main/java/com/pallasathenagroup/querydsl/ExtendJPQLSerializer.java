@@ -7,12 +7,12 @@ import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.Path;
 import com.querydsl.jpa.JPQLSerializer;
 import com.querydsl.jpa.JPQLTemplates;
-import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
-import com.vladmihalcea.hibernate.type.util.Configuration;
+import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
+import io.hypersistence.utils.hibernate.type.util.JsonConfiguration;
+import jakarta.persistence.EntityManager;
 import java.util.Map;
 import java.util.Set;
-import javax.persistence.EntityManager;
-import org.hibernate.jpa.TypedParameterValue;
+import org.hibernate.query.TypedParameterValue;
 
 /**
  * Support serialize update a field in jsonb type
@@ -55,7 +55,7 @@ public class ExtendJPQLSerializer extends JPQLSerializer {
             var path = HibernateTypesExpressions.createArrayExpression(entry.path);
             var rawValue = entry.value;
             if (rawValue instanceof String) {
-                var wrapper = Configuration.INSTANCE.getObjectMapperWrapper();
+                var wrapper = JsonConfiguration.INSTANCE.getObjectMapperWrapper();
                 try {
                     rawValue = wrapper.getObjectMapper().writeValueAsString(rawValue);
                 } catch (JsonProcessingException e) {

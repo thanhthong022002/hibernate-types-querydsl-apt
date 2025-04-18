@@ -1,7 +1,7 @@
 package com.pallasathenagroup.querydsl;
 
 import com.google.common.collect.Range;
-import com.vladmihalcea.hibernate.type.range.guava.PostgreSQLGuavaRangeType;
+import io.hypersistence.utils.hibernate.type.range.guava.PostgreSQLGuavaRangeType;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 

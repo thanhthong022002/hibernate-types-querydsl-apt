@@ -6,10 +6,11 @@ import com.querydsl.core.Tuple;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAUpdateClause;
-import com.vladmihalcea.hibernate.type.array.ListArrayType;
-import com.vladmihalcea.hibernate.type.array.internal.AbstractArrayType;
+import io.hypersistence.utils.hibernate.type.array.ListArrayType;
+import io.hypersistence.utils.hibernate.type.array.internal.AbstractArrayType;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -178,6 +179,7 @@ public class ArrayEntityPathTest extends BaseTestContainersTest {
             props.setProperty(AbstractArrayType.SQL_ARRAY_TYPE, "text");
             props.setProperty(DynamicParameterizedType.ENTITY, ArrayEntity.class.getName());
             props.setProperty(DynamicParameterizedType.PROPERTY, "sensorNameStr");
+            props.setProperty(DynamicParameterizedType.RETURNED_CLASS, ArrayList.class.getName());
             type.setParameterValues(props);
 
             long result = new ExtendJpaUpdateClause(entityManager, arrayEntity)

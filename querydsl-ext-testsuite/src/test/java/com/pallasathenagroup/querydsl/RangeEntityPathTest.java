@@ -4,19 +4,17 @@ import com.google.common.collect.Range;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQuery;
-import org.hibernate.testing.junit4.BaseCoreFunctionalTestCase;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.List;
-
 import static com.pallasathenagroup.querydsl.QRangeEntity.rangeEntity;
 import static org.hibernate.testing.transaction.TransactionUtil.doInJPA;
 
-public class RangeEntityPathTest extends BaseCoreFunctionalTestCase {
+public class RangeEntityPathTest extends BaseTestContainersTest {
 
     @Override
     protected Class<?>[] getAnnotatedClasses() {

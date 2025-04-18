@@ -1,6 +1,6 @@
 package com.pallasathenagroup.querydsl;
 
-import com.vladmihalcea.hibernate.type.basic.PostgreSQLHStoreType;
+import io.hypersistence.utils.hibernate.type.basic.PostgreSQLHStoreType;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 

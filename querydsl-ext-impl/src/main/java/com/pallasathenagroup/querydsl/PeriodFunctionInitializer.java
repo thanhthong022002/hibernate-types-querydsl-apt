@@ -1,6 +1,6 @@
 package com.pallasathenagroup.querydsl;
 
-import com.vladmihalcea.hibernate.type.interval.PostgreSQLPeriodType;
+import io.hypersistence.utils.hibernate.type.interval.PostgreSQLPeriodType;
 import org.hibernate.boot.MetadataBuilder;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.spi.MetadataBuilderInitializer;

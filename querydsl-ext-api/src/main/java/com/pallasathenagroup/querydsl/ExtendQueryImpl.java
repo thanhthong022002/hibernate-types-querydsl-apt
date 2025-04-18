@@ -1,10 +1,10 @@
 package com.pallasathenagroup.querydsl;
 
-import com.vladmihalcea.hibernate.type.array.ListArrayType;
+import io.hypersistence.utils.hibernate.type.array.ListArrayType;
 import java.util.Collection;
 import org.hibernate.engine.query.spi.HQLQueryPlan;
 import org.hibernate.engine.spi.SharedSessionContractImplementor;
-import org.hibernate.jpa.TypedParameterValue;
+import org.hibernate.query.TypedParameterValue;
 import org.hibernate.query.internal.QueryImpl;
 import org.hibernate.query.spi.QueryImplementor;
 

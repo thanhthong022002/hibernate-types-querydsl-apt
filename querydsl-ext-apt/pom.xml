@@ -5,7 +5,7 @@
     <parent>
         <artifactId>querydsl-ext</artifactId>
         <groupId>com.pallasathenagroup.querydsl</groupId>
-        <version>10.0.8</version>
+        <version>11.0.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -23,17 +23,16 @@
             <artifactId>querydsl-ext-api</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <!-- https://github.com/vladmihalcea/hypersistence-utils#hibernate-6 -->
         <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>${jackson.version}</version>
-            <scope>provided</scope>
-            <optional>true</optional>
+            <groupId>com.fasterxml.jackson.module</groupId>
+            <artifactId>jackson-module-jakarta-xmlbind-annotations</artifactId>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/com.google.guava/guava -->
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>25.0-jre</version>
+            <version>${guava.version}</version>
         </dependency>
         <dependency>
             <groupId>com.querydsl</groupId>

@@ -1,6 +1,6 @@
 package com.pallasathenagroup.querydsl;
 
-import com.vladmihalcea.hibernate.type.interval.PostgreSQLIntervalType;
+import io.hypersistence.utils.hibernate.type.interval.PostgreSQLIntervalType;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 
