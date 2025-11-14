@@ -4,7 +4,8 @@ import com.querydsl.core.types.Operator;
 
 public enum CommonOps implements Operator {
     CAST(Object.class),
-    AS_TEXT(String.class);
+    AS_TEXT(String.class),
+    AT_TIME_ZONE(Object.class);
 
     private final Class<?> type;
 

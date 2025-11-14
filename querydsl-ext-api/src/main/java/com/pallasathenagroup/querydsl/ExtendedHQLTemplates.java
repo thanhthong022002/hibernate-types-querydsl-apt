@@ -96,6 +96,7 @@ public class ExtendedHQLTemplates extends HQLTemplates {
 
         templates.add(CommonOps.CAST, "cast({0} as {1s})");
         templates.add(CommonOps.AS_TEXT, "AS_TEXT({0})");
+        templates.add(CommonOps.AT_TIME_ZONE, "AT_TIME_ZONE({0}, {1})");
     }
 
 }

@@ -98,5 +98,7 @@ public class ExtendedJPQLNextTemplates extends JPQLNextTemplates {
         templates.add(YearMonthOps.CAST_YEARMONTH, "CAST_YEARMONTH({0})");
         templates.add(YearMonthOps.CAST_MONTH, "CAST_MONTH({0})");
         templates.add(YearMonthOps.CAST_YEAR, "CAST_YEAR({0})");
+
+        templates.add(CommonOps.AT_TIME_ZONE, "AT_TIME_ZONE({0}, {1})");
     }
 }

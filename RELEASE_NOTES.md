@@ -1,3 +1,8 @@
+10.0.11
+=======
+
+- Add support for atTimeZone conversion operator for datetime expressions (PostgreSQL)
+
 10.0.10
 =======
 

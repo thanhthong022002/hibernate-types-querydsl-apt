@@ -31,6 +31,7 @@ import com.vladmihalcea.hibernate.type.range.guava.PostgreSQLGuavaRangeType;
 import org.hibernate.jpa.TypedParameterValue;
 
 import java.lang.reflect.Array;
+import java.sql.Timestamp;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.Month;
@@ -146,6 +147,14 @@ public final class HibernateTypesExpressions {
 
     public static HstoreExpression asHstore(Expression<Map<String, String>> expression) {
         return new HstoreExpression(expression);
+    }
+
+    public static DateTimeExpression<Timestamp> atTimeZone(DateTimeExpression<?> dateTimeExpression, String timeZone) {
+        return Expressions.asDateTime(Expressions.operation(Timestamp.class, CommonOps.AT_TIME_ZONE, dateTimeExpression, Expressions.constant(timeZone)));
+    }
+
+    public static DateTimeExpression<Timestamp> atTimeZone(DateTimeExpression<?> dateTimeExpression, Expression<String> timeZoneExpression) {
+        return Expressions.asDateTime(Expressions.operation(Timestamp.class, CommonOps.AT_TIME_ZONE, dateTimeExpression, timeZoneExpression));
     }
 
 }
